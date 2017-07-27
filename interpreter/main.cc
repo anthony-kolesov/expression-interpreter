@@ -5,9 +5,11 @@
 #include "expression.h"
 #include "parser.h"
 #include "lexer.h"
- 
+
 #include <stdio.h>
- 
+#include <iostream>
+#include <string>
+
 int yyparse(SExpression **expression, yyscan_t scanner);
 
 SExpression *getAST(const char *expr)
@@ -50,24 +52,34 @@ int evaluate(SExpression *e)
     }
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-    SExpression *e = NULL;
-    char test[]=" 4 + 2*10 + 3*( 5 + 1 )";
-    int result = 0;
+    while (!std::cin.eof()) {
+        SExpression *e = NULL;
+        int result = 0;
 
-    e = getAST(test);
+        std::string inputString;
+        std::getline(std::cin, inputString);
 
-	if (e == NULL) {
-		printf("Error!\n");
-		return 1;
-	}
+        if (inputString.size() == 0) {
+            continue;
+        }
 
-    result = evaluate(e);
+        e = getAST(inputString.c_str());
 
-    printf("Result of '%s' is %d\n", test, result);
+        if (e == NULL) {
+            printf("Error!\n");
+            return 1;
+        }
 
-    deleteExpression(e);
+        result = evaluate(e);
+
+        printf("%d\n", result);
+
+        deleteExpression(e);
+    }
 
     return 0;
 }
+
+// vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab
