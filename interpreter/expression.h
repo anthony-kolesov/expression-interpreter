@@ -16,37 +16,51 @@ typedef enum tagEOperationType
 } EOperationType;
 
 /**
- * @brief The expression structure
+ * @brief Interpeter expression.
  */
-typedef struct tagSExpression
+class Expression
 {
+  private:
     EOperationType type;///< type of operation
 
     int value;///< valid only when type is eVALUE
-    struct tagSExpression *left; ///< left side of the tree
-    struct tagSExpression *right;///< right side of the tree
-} SExpression;
+    Expression *left; ///< left side of the tree
+    Expression *right;///< right side of the tree
 
-/**
- * @brief It creates an identifier
- * @param value The number value
- * @return The expression or NULL in case of no memory
- */
-SExpression *createNumber(int value);
+  public:
+    Expression(): type(eVALUE), value(0), left(nullptr), right(nullptr) { };
+    ~Expression() {
+        delete this->left;
+        delete this->right;
+    }
 
-/**
- * @brief It creates an operation
- * @param type The operation type
- * @param left The left operand
- * @param right The right operand
- * @return The expression or NULL in case of no memory
- */
-SExpression *createOperation(EOperationType type, SExpression *left, SExpression *right);
+    /**
+     * @param value The number value
+     */
+    Expression(int value): Expression() {
+        this->type = eVALUE;
+        this->value = value;
+    }
 
-/**
- * @brief Deletes a expression
- * @param b The expression
- */
-void deleteExpression(SExpression *b);
+    /**
+     * @param type The operation type
+     * @param left The left operand
+     * @param right The right operand
+     */
+    Expression(EOperationType type, Expression* left, Expression* right):
+        Expression() {
+
+        this->type = type;
+        this->left = left;
+        this->right = right;
+    }
+
+    /**
+     * @brief Evaluate value of this expression.
+     */
+    int evaluate() const;
+};
 
 #endif // __EXPRESSION_H__
+
+// vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

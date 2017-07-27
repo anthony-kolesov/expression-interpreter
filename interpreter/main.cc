@@ -10,11 +10,11 @@
 #include <iostream>
 #include <string>
 
-int yyparse(SExpression **expression, yyscan_t scanner);
+int yyparse(Expression **expression, yyscan_t scanner);
 
-SExpression *getAST(const char *expr)
+Expression *getAST(const char *expr)
 {
-    SExpression *expression;
+    Expression *expression;
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
@@ -37,25 +37,10 @@ SExpression *getAST(const char *expr)
     return expression;
 }
 
-int evaluate(SExpression *e)
-{
-    switch (e->type) {
-        case eVALUE:
-            return e->value;
-        case eMULTIPLY:
-            return evaluate(e->left) * evaluate(e->right);
-        case ePLUS:
-            return evaluate(e->left) + evaluate(e->right);
-        default:
-            // shouldn't be here
-            return 0;
-    }
-}
-
 int main(int argc, char *argv[])
 {
     while (!std::cin.eof()) {
-        SExpression *e = NULL;
+        Expression *e = NULL;
         int result = 0;
 
         std::string inputString;
@@ -72,11 +57,11 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        result = evaluate(e);
+        result = e->evaluate();
 
         printf("%d\n", result);
 
-        deleteExpression(e);
+        delete e;
     }
 
     return 0;

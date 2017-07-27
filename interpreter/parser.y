@@ -9,7 +9,7 @@
 #include "parser.h"
 #include "lexer.h"
 
-int yyerror(SExpression **expression, yyscan_t scanner, const char *msg) {
+int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
     // Add error handling routine as needed
 }
 
@@ -29,12 +29,12 @@ typedef void* yyscan_t;
 
 %define api.pure
 %lex-param   { yyscan_t scanner }
-%parse-param { SExpression **expression }
+%parse-param { Expression **expression }
 %parse-param { yyscan_t scanner }
 
 %union {
     int value;
-    SExpression *expression;
+    Expression *expression;
 }
 
 %left '+' TOKEN_PLUS
@@ -55,10 +55,10 @@ input
     ;
 
 expr
-    : expr[L] TOKEN_PLUS expr[R] { $$ = createOperation( ePLUS, $L, $R ); }
-    | expr[L] TOKEN_MULTIPLY expr[R] { $$ = createOperation( eMULTIPLY, $L, $R ); }
+    : expr[L] TOKEN_PLUS expr[R] { $$ = new Expression( ePLUS, $L, $R ); }
+    | expr[L] TOKEN_MULTIPLY expr[R] { $$ = new Expression( eMULTIPLY, $L, $R ); }
     | TOKEN_LPAREN expr[E] TOKEN_RPAREN { $$ = $E; }
-    | TOKEN_NUMBER { $$ = createNumber($1); }
+    | TOKEN_NUMBER { $$ = new Expression($1); }
     ;
 
 %%

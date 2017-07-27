@@ -4,11 +4,11 @@ CC	= g++
 LEX = flex
 YACC = bison
 
-SRCFILES = lexer.c parser.c expression.c main.cc
+SRCFILES = lexer.c parser.c expression.cc main.cc
 OBJFILES = $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(SRCFILES)))
 APP = interpreter.elf
 
-CFLAGS= -g -ansi
+CFLAGS= -g -std=c++11
 CXXFLAGS = $(CFLAGS)
 
 all: $(APP)
