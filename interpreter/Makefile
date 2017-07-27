@@ -27,5 +27,13 @@ CLEAN += parser.c parser.h
 parser.c parser.h: parser.y lexer.c
 		$(YACC) $(YACCFLAGS) $<
 
+TESTS = $(patsubst %.in,%,$(wildcard tests/*.in))
+
+test: $(APP)
+	for t in $(TESTS); do \
+		./$(APP) < $${t}.in > $${t}.app_out ;\
+		cmp $${t}.app_out $${t}.out ;\
+	done
+
 clean:
-		rm -f *.o *~ $(CLEAN)
+		rm -f *.o *~ $(CLEAN) $(addsuffix .app_out,$(TESTS))
