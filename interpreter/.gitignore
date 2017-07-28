@@ -1,4 +1,5 @@
 *.elf
+*.o
 parser.[ch]
 lexer.[ch]
 tests/*.app_out
