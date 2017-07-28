@@ -6,10 +6,11 @@
  */
 
 #include "expression.h"
+#include "statement.h"
 #include "parser.h"
 #include "lexer.h"
 
-int yyerror(Expression **expression, yyscan_t scanner, const char *msg) {
+int yyerror(Statement **statement, yyscan_t scanner, const char *msg) {
     // Add error handling routine as needed
 }
 
@@ -29,12 +30,13 @@ typedef void* yyscan_t;
 
 %define api.pure
 %lex-param   { yyscan_t scanner }
-%parse-param { Expression **expression }
+%parse-param { Statement **statement }
 %parse-param { yyscan_t scanner }
 
 %union {
     int value;
     Expression *expression;
+    Statement *statement;
 }
 
 %left '+' TOKEN_PLUS
@@ -45,13 +47,19 @@ typedef void* yyscan_t;
 %token TOKEN_PLUS
 %token TOKEN_MULTIPLY
 %token <value> TOKEN_NUMBER
+%token TOKEN_OUT
 
 %type <expression> expr
+%type <statement> stmt
 
 %%
 
 input
-    : expr { *expression = $1; }
+    : stmt { *statement = $1; }
+    ;
+
+stmt
+    : TOKEN_OUT expr[E] { $$ = new OutStatement($E); }
     ;
 
 expr
@@ -62,3 +70,5 @@ expr
     ;
 
 %%
+
+// vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

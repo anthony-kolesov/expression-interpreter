@@ -6,6 +6,7 @@
  */
 
 #include "expression.h"
+#include "statement.h"
 #include "parser.h"
 
 #include <stdio.h>
@@ -17,6 +18,8 @@
 
 %option reentrant noyywrap never-interactive nounistd
 %option bison-bridge
+
+OUT "out"
 
 LPAREN      "("
 RPAREN      ")"
@@ -35,6 +38,9 @@ WS          [ \r\n\t]*
 {PLUS}          { return TOKEN_PLUS; }
 {LPAREN}        { return TOKEN_LPAREN; }
 {RPAREN}        { return TOKEN_RPAREN; }
+
+{OUT} { return TOKEN_OUT; }
+
 .               {  }
 
 %%

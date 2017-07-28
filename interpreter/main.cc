@@ -3,6 +3,7 @@
  */
 
 #include "expression.h"
+#include "statement.h"
 #include "parser.h"
 #include "lexer.h"
 
@@ -10,11 +11,10 @@
 #include <iostream>
 #include <string>
 
-int yyparse(Expression **expression, yyscan_t scanner);
+int yyparse(Statement **statement, yyscan_t scanner);
 
-Expression *getAST(const char *expr)
+Statement *getAST(const char *stmt)
 {
-    Expression *expression;
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
@@ -23,9 +23,10 @@ Expression *getAST(const char *expr)
         return NULL;
     }
 
-    state = yy_scan_string(expr, scanner);
+    state = yy_scan_string(stmt, scanner);
 
-    if (yyparse(&expression, scanner)) {
+    Statement *statement;
+    if (yyparse(&statement, scanner)) {
         // error parsing
         return NULL;
     }
@@ -34,13 +35,12 @@ Expression *getAST(const char *expr)
 
     yylex_destroy(scanner);
 
-    return expression;
+    return statement;
 }
 
 int main(int argc, char *argv[])
 {
     while (!std::cin.eof()) {
-        Expression *e = NULL;
         int result = 0;
 
         std::string inputString;
@@ -50,18 +50,16 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        e = getAST(inputString.c_str());
+        Statement *stmt = getAST(inputString.c_str());
 
-        if (e == NULL) {
+        if (stmt == NULL) {
             printf("Error!\n");
             return 1;
         }
 
-        result = e->evaluate();
+        stmt->execute();
 
-        printf("%d\n", result);
-
-        delete e;
+        delete stmt;
     }
 
     return 0;
