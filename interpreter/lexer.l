@@ -5,11 +5,13 @@
  * To generate the lexical analyzer run: "flex lexer.l"
  */
 
+#include <cstdio>
+#include <sstream>
+
+#include "error.h"
 #include "expression.h"
 #include "statement.h"
 #include "parser.h"
-
-#include <stdio.h>
 
 /* Update line/column information for a token.  */
 #define YY_USER_ACTION \
@@ -49,10 +51,11 @@ WS          [ \r\n\t]*
 
 {OUT} { return TOKEN_OUT; }
 
-.               {  }
+. {
+    std::stringstream msg;
+    msg << "Unknown symbol `" << yytext << "'";
+    user_error(yylloc, msg.str());
+    return 1;
+}
 
 %%
-
-int yyerror(const char *msg) {
-    fprintf(stderr,"Error:%s\n",msg); return 0;
-}
