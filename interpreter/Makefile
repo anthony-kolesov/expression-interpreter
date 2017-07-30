@@ -29,9 +29,11 @@ parser.c parser.h: parser.y lexer.c
 
 TESTS = $(patsubst %.in,%,$(wildcard tests/*.in))
 
+# stderr is directed to the same file as stdout, so it can be compared with a
+# single reference output file.
 test: $(APP)
 	for t in $(TESTS); do \
-		./$(APP) < $${t}.in > $${t}.app_out ;\
+		./$(APP) < $${t}.in > $${t}.app_out 2>&1 ;\
 		cmp $${t}.app_out $${t}.out ;\
 	done
 
