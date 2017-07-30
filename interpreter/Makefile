@@ -4,6 +4,14 @@ CC	= g++
 LEX = flex
 YACC = bison
 
+CPPLINT = tools/cpplint.py
+# build/include demands that header files included with quotes should be
+# referenced by the directory name. This error doesn't make a lot of sense in
+# case when header is already in the same directory. And prefixing header with
+# "./" just makes things worse, because now cpplint complains that it is "./"
+# instead of "interpreter". 
+CPPLINTFLAGS = --filter=-build/include
+
 SRCFILES = lexer.c parser.c expression.cc main.cc
 OBJFILES = $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(SRCFILES)))
 APP = interpreter.elf
@@ -41,4 +49,4 @@ clean:
 		rm -f *.o *~ $(CLEAN) $(addsuffix .app_out,$(TESTS))
 
 lint:
-	tools/cpplint.py $(filter %.cc,$(SRCFILES))
+	$(CPPLINT) $(CPPLINTFLAGS) $(filter %.cc,$(SRCFILES))
