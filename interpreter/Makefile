@@ -12,7 +12,7 @@ CPPLINT = tools/cpplint.py
 # instead of "interpreter". 
 CPPLINTFLAGS = --filter=-build/include
 
-SRCFILES = lexer.c parser.c expression.cc main.cc
+SRCFILES = lexer.c parser.c expression.cc error.cc main.cc
 OBJFILES = $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(SRCFILES)))
 APP = interpreter.elf
 
