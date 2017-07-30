@@ -1,5 +1,18 @@
-/*
- * main.c file
+/* Main body of interpreter application
+ * Copyright (C) 2017 Anton Kolesov
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "expression.h"
@@ -13,8 +26,7 @@
 
 int yyparse(Statement **statement, yyscan_t scanner);
 
-Statement *getAST(const char *stmt, int lineno)
-{
+Statement *getAST(const char *stmt, int lineno) {
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
@@ -39,8 +51,7 @@ Statement *getAST(const char *stmt, int lineno)
     return statement;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     /* Columns are counted starting with 0 and I cannot find the way to make
      * them start counting from 1, so for consistency lines should be counted
      * starting with 0 as well.  */
