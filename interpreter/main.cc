@@ -46,8 +46,6 @@ int main(int argc, char *argv[])
      * starting with 0 as well.  */
     int lineno = 0;
     while (!std::cin.eof()) {
-        int result = 0;
-
         std::string inputString;
         std::getline(std::cin, inputString);
 
