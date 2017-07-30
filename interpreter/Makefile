@@ -39,3 +39,6 @@ test: $(APP)
 
 clean:
 		rm -f *.o *~ $(CLEAN) $(addsuffix .app_out,$(TESTS))
+
+lint:
+	tools/cpplint.py $(filter %.cc,$(SRCFILES))
