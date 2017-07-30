@@ -10,7 +10,9 @@
 #include "parser.h"
 #include "lexer.h"
 
-int yyerror(Statement **statement, yyscan_t scanner, const char *msg) {
+int yyerror(const YYLTYPE *loc, Statement **statement, yyscan_t scanner,
+    const char *msg)
+{
     // Add error handling routine as needed
 }
 
@@ -32,6 +34,8 @@ typedef void* yyscan_t;
 %lex-param   { yyscan_t scanner }
 %parse-param { Statement **statement }
 %parse-param { yyscan_t scanner }
+
+%locations
 
 %union {
     int value;

@@ -11,6 +11,12 @@
 
 #include <stdio.h>
 
+/* Update line/column information for a token.  */
+#define YY_USER_ACTION \
+    yylloc->first_column = yycolumn; yylloc->last_column = yycolumn + yyleng - 1; \
+    yylloc->first_line = yylloc->last_line = yylineno; \
+    yycolumn += yyleng;
+
 %}
 
 %option outfile="lexer.c" header-file="lexer.h"
@@ -18,6 +24,8 @@
 
 %option reentrant noyywrap never-interactive nounistd
 %option bison-bridge
+%option bison-locations
+%option yylineno
 
 OUT "out"
 
