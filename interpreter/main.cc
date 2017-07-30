@@ -74,8 +74,7 @@ int main(int argc, char *argv[]) {
         lineno += 1;
 
         if (stmt == NULL) {
-            printf("Error!\n");
-            return 1;
+            continue;
         }
 
         stmt->execute();
