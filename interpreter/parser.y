@@ -6,14 +6,14 @@
  */
 
 #include "expression.h"
+#include "error.h"
 #include "statement.h"
 #include "parser.h"
 #include "lexer.h"
 
 int yyerror(const YYLTYPE *loc, Statement **statement, yyscan_t scanner,
-    const char *msg)
-{
-    // Add error handling routine as needed
+        const char *msg) {
+    user_error(loc, std::string(msg));
 }
 
 %}
