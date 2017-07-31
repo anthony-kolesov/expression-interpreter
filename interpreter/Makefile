@@ -32,8 +32,14 @@ lexer.c: lexer.l
 		$(LEX) $(LEXFLAGS) $<
 
 CLEAN += parser.c parser.h
-parser.c parser.h: parser.y lexer.c
+parser.c: parser.y lexer.c
 		$(YACC) $(YACCFLAGS) $<
+
+# Both parser.{c,h} are generated on the same run, but if we write tule like
+# parser.c parser.h:
+#     bison parser.y
+# Then bison will be called twice in the parallel build.
+parser.h: parser.c
 
 TESTS = $(patsubst %.in,%,$(wildcard tests/*.in))
 
