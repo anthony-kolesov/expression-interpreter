@@ -32,24 +32,24 @@
 COMMENT #.*
 OUT "out"
 
-LPAREN      "("
-RPAREN      ")"
-PLUS        "+"
-MULTIPLY    "*"
+LPAREN "("
+RPAREN ")"
+PLUS "+"
+MULTIPLY "*"
 
-NUMBER      [0-9]+
-WS          [ \r\n\t]*
+NUMBER [0-9]+
+WS [ \r\n\t]*
 
 %%
 
 {COMMENT} { return 0; /* Skip comments.  */ }
-{WS}            { /* Skip blanks. */ }
-{NUMBER}        { sscanf(yytext, "%d", &yylval->value); return TOKEN_NUMBER; }
+{WS} { /* Skip blanks. */ }
+{NUMBER} { sscanf(yytext, "%d", &yylval->value); return TOKEN_NUMBER; }
 
-{MULTIPLY}      { return TOKEN_MULTIPLY; }
-{PLUS}          { return TOKEN_PLUS; }
-{LPAREN}        { return TOKEN_LPAREN; }
-{RPAREN}        { return TOKEN_RPAREN; }
+{MULTIPLY} { return TOKEN_MULTIPLY; }
+{PLUS} { return TOKEN_PLUS; }
+{LPAREN} { return TOKEN_LPAREN; }
+{RPAREN} { return TOKEN_RPAREN; }
 
 {OUT} { return TOKEN_OUT; }
 
