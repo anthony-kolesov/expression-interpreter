@@ -39,6 +39,16 @@ class OutStatement : public Statement
 	}
 };
 
+class PrintStatement : public Statement {
+  private:
+    const std::string str;
+  public:
+    PrintStatement(const std::string &s) : str(s) { }
+    virtual void execute() {
+        std::cout << this->str;
+    }
+};
+
 #endif // STATEMENT_H
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

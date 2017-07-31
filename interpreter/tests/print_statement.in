@@ -1,0 +1,9 @@
+# Valid string.
+print "pi = \n"
+# Another valid string.
+print "foobar"
+# identifiers are not accepted
+print foobar
+# numbers are not accepted
+print 4
+print 4.5

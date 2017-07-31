@@ -1,4 +1,5 @@
 %{
+// vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
 /*
  * parser.y file
@@ -39,6 +40,7 @@ typedef void* yyscan_t;
 
 %union {
     int value;
+    char *strvalue;
     Expression *expression;
     Statement *statement;
 }
@@ -51,7 +53,9 @@ typedef void* yyscan_t;
 %token TOKEN_PLUS
 %token TOKEN_MULTIPLY
 %token <value> TOKEN_NUMBER
+%token <strvalue> TOKEN_STRING
 %token TOKEN_OUT
+%token TOKEN_PRINT
 
 %type <expression> expr
 %type <statement> stmt
@@ -65,6 +69,7 @@ input
 
 stmt
     : TOKEN_OUT expr[E] { $$ = new OutStatement($E); }
+    | TOKEN_PRINT TOKEN_STRING[S] { $$ = new PrintStatement(std::string($S)); }
     ;
 
 expr

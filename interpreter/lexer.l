@@ -1,4 +1,5 @@
 %{
+// vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
 /*
  * lexer.l file
@@ -31,12 +32,14 @@
 
 COMMENT #.*
 OUT "out"
+PRINT "print"
 
 LPAREN "("
 RPAREN ")"
 PLUS "+"
 MULTIPLY "*"
 
+STRING_LITERAL "\""[^\"]*"\""
 NUMBER [0-9]+
 WS [ \r\n\t]*
 
@@ -45,6 +48,33 @@ WS [ \r\n\t]*
 {COMMENT} { return 0; /* Skip comments.  */ }
 {WS} { /* Skip blanks. */ }
 {NUMBER} { sscanf(yytext, "%d", &yylval->value); return TOKEN_NUMBER; }
+{STRING_LITERAL} {
+    /* Strip the quotes.  */
+    std::string input_str(yytext+1);
+    input_str.pop_back();
+
+    /* This is a very convoluted way to escape `\n' sequence to a real newline.
+     * Standard C++ remove_if, replace_if and friends don't work here because
+     * they are designed to work on individual elements, regardless of order of
+     * those elements. And regular expressions which could have solved this
+     * problem quite nicely are not available in GCC 4.8 which I'm using.
+     */
+    std::string escaped_str;
+    escaped_str.reserve(input_str.size());
+    for (int i = 0; i < input_str.size(); i++) {
+        /* If this is a `\', not a last char in string and next char is `n'. */
+        if ((input_str[i] != '\\') || (i == input_str.size() - 1)
+            || (input_str[i+1] != 'n')) {
+            escaped_str.push_back(input_str[i]);
+        } else {
+            escaped_str.push_back('\n');
+            i++;
+        }
+    }
+
+    yylval->strvalue = strdup(escaped_str.c_str());
+    return TOKEN_STRING;
+}
 
 {MULTIPLY} { return TOKEN_MULTIPLY; }
 {PLUS} { return TOKEN_PLUS; }
@@ -52,6 +82,7 @@ WS [ \r\n\t]*
 {RPAREN} { return TOKEN_RPAREN; }
 
 {OUT} { return TOKEN_OUT; }
+{PRINT} { return TOKEN_PRINT; }
 
 . {
     std::stringstream msg;

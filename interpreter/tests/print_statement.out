@@ -1,0 +1,5 @@
+pi = 
+foobarERROR:5,25707:Unknown symbol `f'
+ERROR:5,25707:syntax error, unexpected $undefined, expecting TOKEN_STRING
+ERROR:7,36:syntax error, unexpected TOKEN_NUMBER, expecting TOKEN_STRING
+ERROR:8,32:syntax error, unexpected TOKEN_NUMBER, expecting TOKEN_STRING
