@@ -29,6 +29,7 @@
 %option bison-locations
 %option yylineno
 
+COMMENT #.*
 OUT "out"
 
 LPAREN      "("
@@ -41,6 +42,7 @@ WS          [ \r\n\t]*
 
 %%
 
+{COMMENT} { return 0; /* Skip comments.  */ }
 {WS}            { /* Skip blanks. */ }
 {NUMBER}        { sscanf(yytext, "%d", &yylval->value); return TOKEN_NUMBER; }
 

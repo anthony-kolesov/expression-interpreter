@@ -38,7 +38,7 @@ Statement *getAST(const char *stmt, int lineno) {
     state = yy_scan_string(stmt, scanner);
     yyset_lineno(lineno, scanner);
 
-    Statement *statement;
+    Statement *statement = nullptr;
     if (yyparse(&statement, scanner)) {
         // error parsing
         return NULL;

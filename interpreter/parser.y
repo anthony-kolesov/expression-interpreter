@@ -60,6 +60,7 @@ typedef void* yyscan_t;
 
 input
     : stmt { *statement = $1; }
+    |
     ;
 
 stmt
