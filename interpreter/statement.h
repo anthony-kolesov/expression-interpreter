@@ -5,6 +5,7 @@
 
 #include <iostream>
 
+#include "context.h"
 #include "expression.h"
 
 /**
@@ -16,7 +17,7 @@ class Statement
     /**
      * @brief Execute statement.
      */
-	virtual void execute() = 0;
+    virtual void execute(Context *ctx) = 0;
 };
 
 /**
@@ -34,8 +35,8 @@ class OutStatement : public Statement
         delete expr;
     }
 
-    virtual void execute() {
-        std::cout << this->expr->evaluate();
+    virtual void execute(Context *ctx) {
+        std::cout << this->expr->evaluate(ctx);
 	}
 };
 
@@ -44,7 +45,8 @@ class PrintStatement : public Statement {
     const std::string str;
   public:
     PrintStatement(const std::string &s) : str(s) { }
-    virtual void execute() {
+
+    virtual void execute(Context *ctx) {
         std::cout << this->str;
     }
 };

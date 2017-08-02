@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "context.h"
 #include "expression.h"
 #include "statement.h"
 #include "parser.h"
@@ -57,6 +58,9 @@ int main(int argc, char *argv[]) {
      * them start counting from 1, so for consistency lines should be counted
      * starting with 0 as well.  */
     int lineno = 1;
+
+    Context ctx;
+
     while (!std::cin.eof()) {
         std::string input_string;
         std::getline(std::cin, input_string);
@@ -78,7 +82,7 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        stmt->execute();
+        stmt->execute(&ctx);
 
         delete stmt;
     }

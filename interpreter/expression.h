@@ -5,6 +5,8 @@
 #ifndef __EXPRESSION_H__
 #define __EXPRESSION_H__
 
+#include "context.h"
+
 /**
  * @brief The operation type
  */
@@ -58,7 +60,7 @@ class Expression
     /**
      * @brief Evaluate value of this expression.
      */
-    int evaluate() const;
+    int evaluate(Context *ctx) const;
 };
 
 #endif // __EXPRESSION_H__

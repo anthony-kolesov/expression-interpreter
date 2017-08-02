@@ -1,4 +1,4 @@
-/* Implementation of functions used to build the syntax tree.
+/* Program context.
  * Copyright (C) 2017 Anton Kolesov
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,22 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "expression.h"
+#include "context.h"
 
-#include <stdlib.h>
+void Context::setVariable(const std::string &name, int value) {
+    this->variables_[name] = value;
+}
 
-int Expression::evaluate(Context *ctx) const {
-    switch (this->type) {
-        case eVALUE:
-            return this->value;
-        case eMULTIPLY:
-            return this->left->evaluate(ctx) * this->right->evaluate(ctx);
-        case ePLUS:
-            return this->left->evaluate(ctx) + this->right->evaluate(ctx);
-        default:
-            // shouldn't be here
-            return 0;
-    }
+int Context::getVariable(const std::string &name) {
+    return this->variables_[name];
 }
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

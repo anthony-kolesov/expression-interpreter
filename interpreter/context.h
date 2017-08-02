@@ -1,4 +1,4 @@
-/* Implementation of functions used to build the syntax tree.
+/* Definition of the structure that describes program context.
  * Copyright (C) 2017 Anton Kolesov
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,22 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "expression.h"
+#ifndef CONTEXT_H_
+#define CONTEXT_H_
 
-#include <stdlib.h>
+#include <string>
+#include <unordered_map>
 
-int Expression::evaluate(Context *ctx) const {
-    switch (this->type) {
-        case eVALUE:
-            return this->value;
-        case eMULTIPLY:
-            return this->left->evaluate(ctx) * this->right->evaluate(ctx);
-        case ePLUS:
-            return this->left->evaluate(ctx) + this->right->evaluate(ctx);
-        default:
-            // shouldn't be here
-            return 0;
-    }
-}
+/**
+ * @brief Program context
+ */
+class Context {
+ private:
+    std::unordered_map<std::string, int> variables_;
+
+ public:
+    Context() : variables_() { }
+
+    void setVariable(const std::string &name, int value);
+    int getVariable(const std::string &name);
+};
+
+#endif  // CONTEXT_H_
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab
