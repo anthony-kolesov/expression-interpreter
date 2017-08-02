@@ -57,13 +57,16 @@ int main(int argc, char *argv[]) {
     /* Columns are counted starting with 0 and I cannot find the way to make
      * them start counting from 1, so for consistency lines should be counted
      * starting with 0 as well.  */
-    int lineno = 1;
+    int lineno = 0;
 
     Context ctx;
 
     while (!std::cin.eof()) {
         std::string input_string;
         std::getline(std::cin, input_string);
+
+        // Update line number,
+        lineno += 1;
 
         if (input_string.size() == 0) {
             continue;
@@ -74,9 +77,6 @@ int main(int argc, char *argv[]) {
 #endif
 
         Statement *stmt = getAST(input_string.c_str(), lineno);
-
-        // Update line number,
-        lineno += 1;
 
         if (stmt == NULL) {
             continue;
