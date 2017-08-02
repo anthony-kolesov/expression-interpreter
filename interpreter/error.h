@@ -34,4 +34,13 @@
  */
 int user_error(const YYLTYPE *loc, const std::string &msg);
 
+
+/**
+ * @brief Report an error to the user in format "ERROR:<line>:msg".
+ *
+ * @param line Location of error in code.
+ * @param msg Error text to show to the user.
+ */
+int user_error(int line, const std::string &msg);
+
 #endif  // ERROR_H_

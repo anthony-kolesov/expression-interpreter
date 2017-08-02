@@ -26,4 +26,8 @@ int user_error(const YYLTYPE *loc, const std::string &msg) {
     std::cerr << ":" << msg << std::endl;
 }
 
+int user_error(int line, const std::string &msg) {
+    std::cerr << "ERROR:" << line << ":" << msg << std::endl;
+}
+
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

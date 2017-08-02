@@ -16,6 +16,7 @@
  */
 
 #include "context.h"
+#include "error.h"
 #include "expression.h"
 #include "statement.h"
 #include "parser.h"
@@ -23,6 +24,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 int yyparse(Statement **statement, yyscan_t scanner);
@@ -82,7 +84,12 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        stmt->execute(&ctx);
+        try {
+            stmt->execute(&ctx);
+        } catch (std::exception &e) {
+            user_error(lineno, e.what());
+            return 1;
+        }
 
         delete stmt;
     }
