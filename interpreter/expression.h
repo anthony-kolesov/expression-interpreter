@@ -1,17 +1,29 @@
-/*
- * expression.h
- * Definition of the structure used to build the syntax tree.
+/* Definition of the structure used to build the syntax tree.
+ * Copyright (C) 2017 Anton Kolesov
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __EXPRESSION_H__
-#define __EXPRESSION_H__
+
+#ifndef EXPRESSION_H_
+#define EXPRESSION_H_
 
 #include "context.h"
 
 /**
  * @brief The operation type
  */
-typedef enum tagEOperationType
-{
+typedef enum tagEOperationType {
     eVALUE,
     eMULTIPLY,
     ePLUS
@@ -20,28 +32,27 @@ typedef enum tagEOperationType
 /**
  * @brief Interpeter expression.
  */
-class Expression
-{
-  private:
-    EOperationType type;///< type of operation
+class Expression {
+ private:
+    EOperationType type_;  ///< type of operation
 
-    int value;///< valid only when type is eVALUE
-    Expression *left; ///< left side of the tree
-    Expression *right;///< right side of the tree
+    int value_;  ///< valid only when type is eVALUE
+    Expression *left_;  ///< left side of the tree
+    Expression *right_;  ///< right side of the tree
 
-  public:
-    Expression(): type(eVALUE), value(0), left(nullptr), right(nullptr) { };
+ public:
+    Expression(): type_(eVALUE), value_(0), left_(nullptr), right_(nullptr) { }
     ~Expression() {
-        delete this->left;
-        delete this->right;
+        delete this->left_;
+        delete this->right_;
     }
 
     /**
      * @param value The number value
      */
-    Expression(int value): Expression() {
-        this->type = eVALUE;
-        this->value = value;
+    explicit Expression(int value): Expression() {
+        this->type_ = eVALUE;
+        this->value_ = value;
     }
 
     /**
@@ -51,10 +62,9 @@ class Expression
      */
     Expression(EOperationType type, Expression* left, Expression* right):
         Expression() {
-
-        this->type = type;
-        this->left = left;
-        this->right = right;
+        this->type_ = type;
+        this->left_ = left;
+        this->right_ = right;
     }
 
     /**
@@ -63,6 +73,6 @@ class Expression
     int evaluate(Context *ctx) const;
 };
 
-#endif // __EXPRESSION_H__
+#endif  // EXPRESSION_H_
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef ERROR_H_
+#define ERROR_H_
 
 #include <iostream>
 #include <string>
@@ -34,4 +34,4 @@
  */
 int user_error(const YYLTYPE *loc, const std::string &msg);
 
-#endif // ERROR_H
+#endif  // ERROR_H_

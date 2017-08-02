@@ -1,7 +1,22 @@
-/* Implementation of possible program statements.  */
+/* Implementation of possible program statements.
+ * Copyright (C) 2017 Anton Kolesov
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-#ifndef STATEMENT_H
-#define STATEMENT_H
+#ifndef STATEMENT_H_
+#define STATEMENT_H_
 
 #include <iostream>
 
@@ -11,9 +26,8 @@
 /**
  * @brief Abstract class to represent program statements
  */
-class Statement
-{
-  public:
+class Statement {
+ public:
     /**
      * @brief Execute statement.
      */
@@ -23,34 +37,34 @@ class Statement
 /**
  * @brief Statements that print expression result to output.
  */
-class OutStatement : public Statement
-{
-  private:
-    const Expression *expr;
+class OutStatement : public Statement {
+ private:
+    const Expression *expr_;
 
-  public:
-    OutStatement(const Expression *expr) : expr(expr) { }
+ public:
+    explicit OutStatement(const Expression *expr) : expr_(expr) { }
 
     ~OutStatement() {
-        delete expr;
+        delete expr_;
     }
 
     virtual void execute(Context *ctx) {
-        std::cout << this->expr->evaluate(ctx);
-	}
+        std::cout << this->expr_->evaluate(ctx);
+    }
 };
 
 class PrintStatement : public Statement {
-  private:
-    const std::string str;
-  public:
-    PrintStatement(const std::string &s) : str(s) { }
+ private:
+    const std::string str_;
+
+ public:
+    explicit PrintStatement(const std::string &s) : str_(s) { }
 
     virtual void execute(Context *ctx) {
-        std::cout << this->str;
+        std::cout << this->str_;
     }
 };
 
-#endif // STATEMENT_H
+#endif  // STATEMENT_H_
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

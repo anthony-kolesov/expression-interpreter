@@ -10,8 +10,9 @@ CPPLINT = tools/cpplint.py
 # case when header is already in the same directory. And prefixing header with
 # "./" just makes things worse, because now cpplint complains that it is "./"
 # instead of "interpreter". 
-CPPLINTFLAGS = --filter=-build/include
+CPPLINTFLAGS = --filter=-build/include --root=interpreter
 
+HFILES = context.h expression.h statement.h error.h
 SRCFILES = lexer.c parser.c context.cc expression.cc error.cc main.cc
 OBJFILES = $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(SRCFILES)))
 APP = interpreter.elf
@@ -55,4 +56,4 @@ clean:
 		rm -f *.o *~ $(CLEAN) $(addsuffix .app_out,$(TESTS))
 
 lint:
-	$(CPPLINT) $(CPPLINTFLAGS) $(filter %.cc,$(SRCFILES))
+	$(CPPLINT) $(CPPLINTFLAGS) $(filter %.cc,$(SRCFILES)) $(HFILES)

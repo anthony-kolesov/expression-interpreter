@@ -20,13 +20,13 @@
 #include <stdlib.h>
 
 int Expression::evaluate(Context *ctx) const {
-    switch (this->type) {
+    switch (this->type_) {
         case eVALUE:
-            return this->value;
+            return this->value_;
         case eMULTIPLY:
-            return this->left->evaluate(ctx) * this->right->evaluate(ctx);
+            return this->left_->evaluate(ctx) * this->right_->evaluate(ctx);
         case ePLUS:
-            return this->left->evaluate(ctx) + this->right->evaluate(ctx);
+            return this->left_->evaluate(ctx) + this->right_->evaluate(ctx);
         default:
             // shouldn't be here
             return 0;
