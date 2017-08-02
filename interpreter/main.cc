@@ -58,18 +58,18 @@ int main(int argc, char *argv[]) {
      * starting with 0 as well.  */
     int lineno = 1;
     while (!std::cin.eof()) {
-        std::string inputString;
-        std::getline(std::cin, inputString);
+        std::string input_string;
+        std::getline(std::cin, input_string);
 
-        if (inputString.size() == 0) {
+        if (input_string.size() == 0) {
             continue;
         }
 
 #ifdef DEBUG
-        std::cout << "DEBUG:Parsing input line:" << inputString << std::endl;
+        std::cout << "DEBUG:Parsing input line:" << input_string << std::endl;
 #endif
 
-        Statement *stmt = getAST(inputString.c_str(), lineno);
+        Statement *stmt = getAST(input_string.c_str(), lineno);
 
         // Update line number,
         lineno += 1;
