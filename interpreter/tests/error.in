@@ -5,4 +5,5 @@ wrong out 78
 out 5@2
 out 5.4
 out 45
+print "\n"
 out ABC

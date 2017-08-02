@@ -1,4 +1,6 @@
 # This is a comment
 out 5
+print "\n"
 # This is another comment.
 out 4
+print "\n"

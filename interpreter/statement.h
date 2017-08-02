@@ -35,7 +35,7 @@ class OutStatement : public Statement
     }
 
     virtual void execute() {
-        std::cout << this->expr->evaluate() << std::endl;
+        std::cout << this->expr->evaluate();
 	}
 };
 

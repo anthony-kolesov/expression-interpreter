@@ -9,5 +9,5 @@ ERROR:5,5:syntax error, unexpected $undefined, expecting $end
 ERROR:6,5:Unknown symbol `.'
 ERROR:6,5:syntax error, unexpected $undefined, expecting $end
 45
-ERROR:8,4:Unknown symbol `A'
-ERROR:8,4:syntax error, unexpected $undefined, expecting TOKEN_LPAREN or TOKEN_NUMBER
+ERROR:9,4:Unknown symbol `A'
+ERROR:9,4:syntax error, unexpected $undefined, expecting TOKEN_LPAREN or TOKEN_NUMBER
