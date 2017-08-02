@@ -65,6 +65,25 @@ class PrintStatement : public Statement {
     }
 };
 
+class VarStatement : public Statement {
+ private:
+    const std::string name_;
+    const Expression *expr_;
+
+ public:
+
+    VarStatement(const std::string &name, const Expression *expr) :
+            name_(name), expr_(expr) { }
+
+    ~VarStatement() {
+        delete this->expr_;
+    }
+
+    virtual void execute(Context *ctx) {
+        ctx->setVariable(this->name_, this->expr_->evaluate(ctx));
+    }
+};
+
 #endif  // STATEMENT_H_
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

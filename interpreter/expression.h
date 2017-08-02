@@ -26,7 +26,8 @@
 typedef enum tagEOperationType {
     eVALUE,
     eMULTIPLY,
-    ePLUS
+    ePLUS,
+    eIDENTIFIER,
 } EOperationType;
 
 /**
@@ -39,9 +40,12 @@ class Expression {
     int value_;  ///< valid only when type is eVALUE
     Expression *left_;  ///< left side of the tree
     Expression *right_;  ///< right side of the tree
+    std::string identifier_;
 
  public:
-    Expression(): type_(eVALUE), value_(0), left_(nullptr), right_(nullptr) { }
+    Expression(): type_(eVALUE), value_(0), left_(nullptr), right_(nullptr),
+            identifier_() { }
+
     ~Expression() {
         delete this->left_;
         delete this->right_;
@@ -65,6 +69,12 @@ class Expression {
         this->type_ = type;
         this->left_ = left;
         this->right_ = right;
+    }
+
+    explicit Expression(const std::string identifier)
+        : Expression() {
+        this->type_ = eIDENTIFIER;
+        this->identifier_ = identifier;
     }
 
     /**

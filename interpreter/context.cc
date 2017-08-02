@@ -16,12 +16,19 @@
  */
 
 #include "context.h"
+#include <sstream>
+#include <stdexcept>
 
 void Context::setVariable(const std::string &name, int value) {
     this->variables_[name] = value;
 }
 
 int Context::getVariable(const std::string &name) {
+    if (this->variables_.count(name) == 0) {
+        std::stringstream s;
+        s << "Unknown identifier: " << name;
+        throw std::out_of_range(s.str().c_str());
+    }
     return this->variables_[name];
 }
 

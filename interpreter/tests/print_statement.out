@@ -1,5 +1,4 @@
 pi = 
-foobarERROR:6,6:Unknown symbol `f'
-ERROR:6,6:syntax error, unexpected $undefined, expecting TOKEN_STRING
+foobarERROR:6,6-6,11:syntax error, unexpected TOKEN_IDENTIFIER, expecting TOKEN_STRING
 ERROR:8,6:syntax error, unexpected TOKEN_NUMBER, expecting TOKEN_STRING
 ERROR:9,6:syntax error, unexpected TOKEN_NUMBER, expecting TOKEN_STRING

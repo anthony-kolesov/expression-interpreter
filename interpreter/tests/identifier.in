@@ -1,0 +1,28 @@
+# Simple assignment
+var a1 = 5
+out a1
+print "\n"
+
+# Assignment with evaluation
+var b1 = 5 * 4 + 2
+out b1
+print "\n"
+
+# Assignment using variable
+var c1 = 4
+var c2 = c1 + 9
+out c2
+print "\n"
+
+# Check that of multiple assignment the latest is used
+var e1 = 5
+var e1 = 9
+var e1 = 19
+out e1
+print "\n"
+
+# Variable recursion
+var d1 = 5
+var d1 = d1 + 2
+out d1
+print "\n"

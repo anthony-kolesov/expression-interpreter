@@ -1,0 +1,15 @@
+# Reference to unknown variable
+out undefined1
+var me = undefined2
+
+# 'me" should still be undefined
+out me
+
+# Check error for case where identifier is declared sometime later.
+out g1
+var g1 = 2
+out g1
+print "\n"
+
+# Reference to unknown variable
+out 4 + xyz + 4

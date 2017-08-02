@@ -43,19 +43,24 @@ typedef void* yyscan_t;
     char *strvalue;
     Expression *expression;
     Statement *statement;
+    char *identifier;
 }
 
 %left '+' TOKEN_PLUS
 %left '*' TOKEN_MULTIPLY
+%left '=' TOKEN_ASSIGN
 
 %token TOKEN_LPAREN
 %token TOKEN_RPAREN
 %token TOKEN_PLUS
 %token TOKEN_MULTIPLY
+%token TOKEN_ASSIGN
 %token <value> TOKEN_NUMBER
 %token <strvalue> TOKEN_STRING
+%token <identifier> TOKEN_IDENTIFIER
 %token TOKEN_OUT
 %token TOKEN_PRINT
+%token TOKEN_VAR
 
 %type <expression> expr
 %type <statement> stmt
@@ -70,6 +75,9 @@ input
 stmt
     : TOKEN_OUT expr[E] { $$ = new OutStatement($E); }
     | TOKEN_PRINT TOKEN_STRING[S] { $$ = new PrintStatement(std::string($S)); }
+    | TOKEN_VAR TOKEN_IDENTIFIER[I] TOKEN_ASSIGN expr[E] {
+        $$ = new VarStatement(std::string($I), $E);
+    }
     ;
 
 expr
@@ -77,6 +85,7 @@ expr
     | expr[L] TOKEN_MULTIPLY expr[R] { $$ = new Expression( eMULTIPLY, $L, $R ); }
     | TOKEN_LPAREN expr[E] TOKEN_RPAREN { $$ = $E; }
     | TOKEN_NUMBER { $$ = new Expression($1); }
+    | TOKEN_IDENTIFIER { $$ = new Expression(std::string($1)); }
     ;
 
 %%

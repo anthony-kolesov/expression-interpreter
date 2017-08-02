@@ -27,6 +27,8 @@ int Expression::evaluate(Context *ctx) const {
             return this->left_->evaluate(ctx) * this->right_->evaluate(ctx);
         case ePLUS:
             return this->left_->evaluate(ctx) + this->right_->evaluate(ctx);
+        case eIDENTIFIER:
+            return ctx->getVariable(this->identifier_);
         default:
             // shouldn't be here
             return 0;

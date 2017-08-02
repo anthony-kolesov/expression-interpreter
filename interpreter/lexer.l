@@ -33,12 +33,15 @@
 COMMENT #.*
 OUT "out"
 PRINT "print"
+VAR "var"
 
+ASSIGN "="
 LPAREN "("
 RPAREN ")"
 PLUS "+"
 MULTIPLY "*"
 
+IDENTIFIER [a-zA-Z_][a-zA-Z_0-9]*
 STRING_LITERAL "\""[^\"]*"\""
 NUMBER [0-9]+
 WS [ \r\n\t]*
@@ -76,6 +79,7 @@ WS [ \r\n\t]*
     return TOKEN_STRING;
 }
 
+{ASSIGN} { return TOKEN_ASSIGN; }
 {MULTIPLY} { return TOKEN_MULTIPLY; }
 {PLUS} { return TOKEN_PLUS; }
 {LPAREN} { return TOKEN_LPAREN; }
@@ -83,6 +87,12 @@ WS [ \r\n\t]*
 
 {OUT} { return TOKEN_OUT; }
 {PRINT} { return TOKEN_PRINT; }
+{VAR} { return TOKEN_VAR; }
+
+{IDENTIFIER} {
+    yylval->identifier = strdup(yytext);
+    return TOKEN_IDENTIFIER;
+}
 
 . {
     std::stringstream msg;
