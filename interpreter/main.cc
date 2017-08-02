@@ -36,6 +36,7 @@ Statement *getAST(const char *stmt, int lineno) {
     }
 
     state = yy_scan_string(stmt, scanner);
+    state->yy_bs_column = 0;
     yyset_lineno(lineno, scanner);
 
     Statement *statement = nullptr;
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]) {
     /* Columns are counted starting with 0 and I cannot find the way to make
      * them start counting from 1, so for consistency lines should be counted
      * starting with 0 as well.  */
-    int lineno = 0;
+    int lineno = 1;
     while (!std::cin.eof()) {
         std::string inputString;
         std::getline(std::cin, inputString);
