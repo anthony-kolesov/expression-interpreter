@@ -17,12 +17,15 @@ SRCFILES = lexer.cc parser.cc context.cc expression.cc error.cc main.cc
 OBJFILES = $(patsubst %.cc,%.o,$(SRCFILES))
 APP = interpreter.elf
 
-CFLAGS= -g -std=c++11 -DYYERROR_VERBOSE
+CFLAGS= -g -std=c++11 -DYYERROR_VERBOSE -MMD
 CXXFLAGS = $(CFLAGS)
 
 all: $(APP)
 
-$(OBJFILES): parser.h
+# Include generated dependency files if they exist.
+-include $(SRCFILES:%.cc=%.d)
+
+$(OBJFILES): parser.h $(HFILES)
 
 CLEAN += $(APP)
 $(APP):	$(OBJFILES)
@@ -53,7 +56,7 @@ test: $(APP)
 	done
 
 clean:
-		rm -f *.o *~ $(CLEAN) $(addsuffix .app_out,$(TESTS))
+		rm -f *.d *.o *~ $(CLEAN) $(addsuffix .app_out,$(TESTS))
 
 LINTFILES = $(filter-out parser.cc lexer.cc,$(SRCFILES))
 lint:
