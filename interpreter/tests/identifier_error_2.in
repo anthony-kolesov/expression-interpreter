@@ -1,0 +1,5 @@
+# Check error for case where identifier is declared sometime later.
+out g1
+var g1 = 2
+out g1
+print "\n"

@@ -1,0 +1,2 @@
+# Reference to unknown variable between numbers.
+out 4 + xyz + 4
