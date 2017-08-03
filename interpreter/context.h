@@ -21,18 +21,20 @@
 #include <string>
 #include <unordered_map>
 
+#include "value.h"
+
 /**
  * @brief Program context
  */
 class Context {
  private:
-    std::unordered_map<std::string, int> variables_;
+    std::unordered_map<std::string, Value> variables_;
 
  public:
     Context() : variables_() { }
 
-    void setVariable(const std::string &name, int value);
-    int getVariable(const std::string &name);
+    void setVariable(const std::string &name, const Value &value);
+    Value getVariable(const std::string &name);
 };
 
 #endif  // CONTEXT_H_

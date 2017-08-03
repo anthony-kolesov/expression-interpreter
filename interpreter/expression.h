@@ -19,6 +19,7 @@
 #define EXPRESSION_H_
 
 #include "context.h"
+#include "value.h"
 
 /**
  * @brief The operation type
@@ -37,14 +38,14 @@ class Expression {
  private:
     EOperationType type_;  ///< type of operation
 
-    int value_;  ///< valid only when type is eVALUE
+    Value value_;  ///< valid only when type is eVALUE
     Expression *left_;  ///< left side of the tree
     Expression *right_;  ///< right side of the tree
     std::string identifier_;
 
  public:
-    Expression(): type_(eVALUE), value_(0), left_(nullptr), right_(nullptr),
-            identifier_() { }
+    Expression(): type_(eVALUE), value_(Value(0)), left_(nullptr),
+            right_(nullptr), identifier_() { }
 
     ~Expression() {
         delete this->left_;
@@ -56,7 +57,7 @@ class Expression {
      */
     explicit Expression(int value): Expression() {
         this->type_ = eVALUE;
-        this->value_ = value;
+        this->value_ = Value(value);
     }
 
     /**
@@ -80,7 +81,7 @@ class Expression {
     /**
      * @brief Evaluate value of this expression.
      */
-    int evaluate(Context *ctx) const;
+    Value evaluate(Context *ctx) const;
 };
 
 #endif  // EXPRESSION_H_

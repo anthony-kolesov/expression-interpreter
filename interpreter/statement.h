@@ -49,7 +49,7 @@ class OutStatement : public Statement {
     }
 
     virtual void execute(Context *ctx) {
-        std::cout << this->expr_->evaluate(ctx);
+        std::cout << this->expr_->evaluate(ctx).asString();
     }
 };
 
@@ -71,7 +71,6 @@ class VarStatement : public Statement {
     const Expression *expr_;
 
  public:
-
     VarStatement(const std::string &name, const Expression *expr) :
             name_(name), expr_(expr) { }
 

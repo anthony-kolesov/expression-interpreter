@@ -19,7 +19,7 @@
 
 #include <stdlib.h>
 
-int Expression::evaluate(Context *ctx) const {
+Value Expression::evaluate(Context *ctx) const {
     switch (this->type_) {
         case eVALUE:
             return this->value_;
@@ -31,7 +31,7 @@ int Expression::evaluate(Context *ctx) const {
             return ctx->getVariable(this->identifier_);
         default:
             // shouldn't be here
-            return 0;
+            return Value();
     }
 }
 
