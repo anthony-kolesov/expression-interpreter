@@ -1,5 +1,7 @@
 *.elf
 *.o
-parser.[ch]
-lexer.[ch]
+parser.cc
+parser.h
+lexer.cc
+lexer.h
 tests/*.app_out

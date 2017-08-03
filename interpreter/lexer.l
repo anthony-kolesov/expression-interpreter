@@ -22,7 +22,7 @@
 
 %}
 
-%option outfile="lexer.c" header-file="lexer.h"
+%option outfile="lexer.cc" header-file="lexer.h"
 %option warn nodefault
 
 %option reentrant noyywrap never-interactive nounistd

@@ -13,8 +13,8 @@ CPPLINT = tools/cpplint.py
 CPPLINTFLAGS = --filter=-build/include --root=interpreter
 
 HFILES = context.h error.h expression.h statement.h value.h
-SRCFILES = lexer.c parser.c context.cc expression.cc error.cc main.cc
-OBJFILES = $(patsubst %.cc,%.o,$(patsubst %.c,%.o,$(SRCFILES)))
+SRCFILES = lexer.cc parser.cc context.cc expression.cc error.cc main.cc
+OBJFILES = $(patsubst %.cc,%.o,$(SRCFILES))
 APP = interpreter.elf
 
 CFLAGS= -g -std=c++11 -DYYERROR_VERBOSE
@@ -28,19 +28,19 @@ CLEAN += $(APP)
 $(APP):	$(OBJFILES)
 		$(CC) $(CFLAGS) $+ -o $@
 
-CLEAN += lexer.c lexer.h
-lexer.c: lexer.l
+CLEAN += lexer.cc lexer.h
+lexer.cc: lexer.l
 		$(LEX) $(LEXFLAGS) $<
 
-CLEAN += parser.c parser.h
-parser.c: parser.y lexer.c
+CLEAN += parser.cc parser.h
+parser.cc: parser.y lexer.cc
 		$(YACC) $(YACCFLAGS) $<
 
-# Both parser.{c,h} are generated on the same run, but if we write tule like
-# parser.c parser.h:
+# Both parser.{cc,h} are generated on the same run, but if we write tule like
+# parser.cc parser.h:
 #     bison parser.y
 # Then bison will be called twice in the parallel build.
-parser.h: parser.c
+parser.h: parser.cc
 
 TESTS = $(patsubst %.in,%,$(wildcard tests/*.in))
 
@@ -55,5 +55,6 @@ test: $(APP)
 clean:
 		rm -f *.o *~ $(CLEAN) $(addsuffix .app_out,$(TESTS))
 
+LINTFILES = $(filter-out parser.cc lexer.cc,$(SRCFILES))
 lint:
-	$(CPPLINT) $(CPPLINTFLAGS) $(filter %.cc,$(SRCFILES)) $(HFILES)
+	$(CPPLINT) $(CPPLINTFLAGS) $(LINTFILES) $(HFILES)
