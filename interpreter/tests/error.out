@@ -1,8 +1,8 @@
 ERROR:1:Unknown identifier: ABC
-ERROR:2,4-2,6:syntax error, unexpected TOKEN_OUT, expecting TOKEN_LPAREN or TOKEN_NUMBER or TOKEN_IDENTIFIER
+ERROR:2,4-2,6:syntax error, unexpected TOKEN_OUT, expecting TOKEN_LPAREN or TOKEN_FLOAT_NUMBER or TOKEN_NUMBER or TOKEN_IDENTIFIER
 ERROR:3,0:syntax error, unexpected TOKEN_NUMBER, expecting $end
 ERROR:4,0-4,4:syntax error, unexpected TOKEN_IDENTIFIER, expecting $end
 ERROR:5,5:Unknown symbol `@'
 ERROR:5,5:syntax error, unexpected $undefined, expecting $end
-ERROR:6,5:Unknown symbol `.'
+ERROR:6,5:Unknown symbol `,'
 ERROR:6,5:syntax error, unexpected $undefined, expecting $end

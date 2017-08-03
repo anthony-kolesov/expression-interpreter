@@ -3,7 +3,7 @@ out out
 4 + 2
 wrong out 78
 out 5@2
-out 5.4
+out 5,4
 # This will not be printed.
 out 45
 print "\n"

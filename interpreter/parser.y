@@ -40,6 +40,7 @@ typedef void* yyscan_t;
 
 %union {
     int value;
+    double floatValue;
     char *strvalue;
     Expression *expression;
     Statement *statement;
@@ -55,6 +56,7 @@ typedef void* yyscan_t;
 %token TOKEN_PLUS
 %token TOKEN_MULTIPLY
 %token TOKEN_ASSIGN
+%token <floatValue> TOKEN_FLOAT_NUMBER
 %token <value> TOKEN_NUMBER
 %token <strvalue> TOKEN_STRING
 %token <identifier> TOKEN_IDENTIFIER
@@ -84,7 +86,8 @@ expr
     : expr[L] TOKEN_PLUS expr[R] { $$ = new Expression( ePLUS, $L, $R ); }
     | expr[L] TOKEN_MULTIPLY expr[R] { $$ = new Expression( eMULTIPLY, $L, $R ); }
     | TOKEN_LPAREN expr[E] TOKEN_RPAREN { $$ = $E; }
-    | TOKEN_NUMBER { $$ = new Expression($1); }
+    | TOKEN_NUMBER { $$ = new Expression(Value($1));}
+    | TOKEN_FLOAT_NUMBER { $$ = new Expression(Value($1)); }
     | TOKEN_IDENTIFIER { $$ = new Expression(std::string($1)); }
     ;
 

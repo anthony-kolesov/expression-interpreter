@@ -18,6 +18,8 @@
 #ifndef VALUE_H_
 #define VALUE_H_
 
+#include <string>
+
 /* Creating a hierarchy of IntegerValue and FloatValue might be closer to
  * canonical object oriented design, but I'm not sure this would really make
  * code any simpler. */
@@ -59,43 +61,8 @@ class Value {
         }
     }
 
-    Value operator+(const Value &r) const {
-        if (this->type_ == kInteger && r.type_ == kInteger) {
-            return Value(this->intValue_ + r.intValue_);
-        } else {
-            double result;
-            if (this->type_ == kInteger) {
-                result = static_cast<double>(this->intValue_);
-            } else {
-                result = this->floatValue_;
-            }
-            if (r.type_ == kInteger) {
-                result += static_cast<double>(r.intValue_);
-            } else {
-                result += r.floatValue_;
-            }
-            return Value(result);
-        }
-    }
-
-    Value operator*(const Value &r) const {
-        if (this->type_ == kInteger && r.type_ == kInteger) {
-            return Value(this->intValue_ * r.intValue_);
-        } else {
-            double result;
-            if (this->type_ == kInteger) {
-                result = static_cast<double>(this->intValue_);
-            } else {
-                result = this->floatValue_;
-            }
-            if (r.type_ == kInteger) {
-                result *= static_cast<double>(r.intValue_);
-            } else {
-                result *= r.floatValue_;
-            }
-            return Value(result);
-        }
-    }
+    Value operator+(const Value &r) const;
+    Value operator*(const Value &r) const;
 };
 
 #endif  // VALUE_H_

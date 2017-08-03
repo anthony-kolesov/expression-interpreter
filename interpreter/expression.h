@@ -55,7 +55,7 @@ class Expression {
     /**
      * @param value The number value
      */
-    explicit Expression(int value): Expression() {
+    explicit Expression(const Value &value): Expression() {
         this->type_ = eVALUE;
         this->value_ = Value(value);
     }

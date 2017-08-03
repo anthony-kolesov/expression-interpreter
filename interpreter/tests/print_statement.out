@@ -1,4 +1,4 @@
 pi = 
 foobarERROR:6,6-6,11:syntax error, unexpected TOKEN_IDENTIFIER, expecting TOKEN_STRING
 ERROR:8,6:syntax error, unexpected TOKEN_NUMBER, expecting TOKEN_STRING
-ERROR:9,6:syntax error, unexpected TOKEN_NUMBER, expecting TOKEN_STRING
+ERROR:9,6-9,8:syntax error, unexpected TOKEN_FLOAT_NUMBER, expecting TOKEN_STRING

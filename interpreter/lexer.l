@@ -43,6 +43,7 @@ MULTIPLY "*"
 
 IDENTIFIER [a-zA-Z_][a-zA-Z_0-9]*
 STRING_LITERAL "\""[^\"]*"\""
+FLOAT_NUMBER [0-9]*\.[0-9]+
 NUMBER [0-9]+
 WS [ \r\n\t]*
 
@@ -50,7 +51,14 @@ WS [ \r\n\t]*
 
 {COMMENT} { return 0; /* Skip comments.  */ }
 {WS} { /* Skip blanks. */ }
+
+{FLOAT_NUMBER} {
+    yylval->floatValue = std::stod(yytext);
+    return TOKEN_FLOAT_NUMBER;
+}
+
 {NUMBER} { sscanf(yytext, "%d", &yylval->value); return TOKEN_NUMBER; }
+
 {STRING_LITERAL} {
     /* Strip the quotes.  */
     std::string input_str(yytext+1);
