@@ -4,6 +4,8 @@ out out
 wrong out 78
 out 5@2
 out 5.4
+# This will not be printed.
 out 45
 print "\n"
+# This will not create an error message, because it's a runtime error.
 out ABC

@@ -1,0 +1,2 @@
+ERROR:3,5:Unknown symbol `@'
+ERROR:3,5:syntax error, unexpected $undefined, expecting $end

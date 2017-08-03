@@ -29,30 +29,36 @@
 
 int yyparse(Statement **statement, yyscan_t scanner);
 
-Statement *getAST(const char *stmt, int lineno) {
+/**
+ * @param out_statement isn't modified if there was a syntax error parsing the
+ * string, or this was a comment line.
+ */
+bool getAST(const char *stmt, int lineno, Statement **out_statement ) {
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
     if (yylex_init(&scanner)) {
         // couldn't initialize
-        return NULL;
+        return false;
     }
 
     state = yy_scan_string(stmt, scanner);
     state->yy_bs_column = 0;
     yyset_lineno(lineno, scanner);
 
-    Statement *statement = nullptr;
-    if (yyparse(&statement, scanner)) {
+    /* Notice how yyparse doesn't follow Google Code style (and otherwise
+     * pretty common) rule that output paramater should after the input
+     * parameter.  */
+    if (yyparse(out_statement, scanner)) {
         // error parsing
-        return NULL;
+        return false;
     }
 
     yy_delete_buffer(state, scanner);
 
     yylex_destroy(scanner);
 
-    return statement;
+    return true;
 }
 
 int main(int argc, char *argv[]) {
@@ -62,6 +68,7 @@ int main(int argc, char *argv[]) {
     int lineno = 0;
 
     Context ctx;
+    bool had_error = false;
 
     while (!std::cin.eof()) {
         std::string input_string;
@@ -78,9 +85,15 @@ int main(int argc, char *argv[]) {
         std::cout << "DEBUG:Parsing input line:" << input_string << std::endl;
 #endif
 
-        Statement *stmt = getAST(input_string.c_str(), lineno);
+        Statement *stmt = nullptr;
+        if (!getAST(input_string.c_str(), lineno, &stmt)) {
+            /* There was a syntax error, so interpreter shouldn't execute this
+             * or any following statements, but should try to move on with
+             * parsing, so it will find as many syntax errors, as possible.  */
+            had_error = true;
+        }
 
-        if (stmt == NULL) {
+        if (had_error || stmt == nullptr) {
             continue;
         }
 
@@ -88,13 +101,17 @@ int main(int argc, char *argv[]) {
             stmt->execute(&ctx);
         } catch (std::exception &e) {
             user_error(lineno, e.what());
-            return 1;
+            had_error = true;
         }
 
         delete stmt;
     }
 
-    return 0;
+    if (had_error) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

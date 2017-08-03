@@ -1,0 +1,4 @@
+# Check that execution error will not happen if there was a syntax erro before
+# it.
+out 5@2
+out ABC
