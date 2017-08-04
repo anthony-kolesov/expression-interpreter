@@ -43,8 +43,8 @@ MULTIPLY "*"
 
 IDENTIFIER [a-zA-Z_][a-zA-Z_0-9]*
 STRING_LITERAL "\""[^\"]*"\""
-FLOAT_NUMBER [0-9]*\.[0-9]+
-NUMBER [0-9]+
+FLOAT_NUMBER -?[0-9]*\.[0-9]+
+NUMBER -?[0-9]+
 WS [ \r\n\t]*
 
 %%
