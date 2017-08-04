@@ -57,6 +57,27 @@ class AddExpression : public Expression {
     }
 };
 
+class DivExpression : public Expression {
+ private:
+    Expression *left_;
+    Expression *right_;
+
+ public:
+    DivExpression(Expression* left, Expression* right) {
+        this->left_ = left;
+        this->right_ = right;
+    }
+
+    virtual ~DivExpression() {
+        delete this->left_;
+        delete this->right_;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        return this->left_->evaluate(ctx) / this->right_->evaluate(ctx);
+    }
+};
+
 class IdentifierExpression : public Expression {
  private:
     std::string identifier_;

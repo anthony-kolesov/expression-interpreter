@@ -64,6 +64,7 @@ class Value {
     Value operator+(const Value &r) const;
     Value operator-(const Value &r) const;
     Value operator*(const Value &r) const;
+    Value operator/(const Value &r) const;
 };
 
 #endif  // VALUE_H_

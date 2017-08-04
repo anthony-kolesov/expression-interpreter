@@ -73,3 +73,22 @@ Value Value::operator*(const Value &r) const {
         return Value(result);
     }
 }
+
+Value Value::operator/(const Value &r) const {
+    if (this->type_ == kInteger && r.type_ == kInteger) {
+        return Value(this->intValue_ / r.intValue_);
+    } else {
+        double result;
+        if (this->type_ == kInteger) {
+            result = static_cast<double>(this->intValue_);
+        } else {
+            result = this->floatValue_;
+        }
+        if (r.type_ == kInteger) {
+            result /= static_cast<double>(r.intValue_);
+        } else {
+            result /= r.floatValue_;
+        }
+        return Value(result);
+    }
+}
