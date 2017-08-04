@@ -19,7 +19,14 @@
 
 #include "value.h"
 
+const std::string Value::kNoneString = "(none)";
+const Value Value::kNone = Value(ValueType::kNoneType);
+
 Value Value::operator+(const Value &r) const {
+    if (this->isNone() || r.isNone()) {
+        return Value::kNone;
+    }
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ + r.intValue_);
     } else {
@@ -39,6 +46,10 @@ Value Value::operator+(const Value &r) const {
 }
 
 Value Value::operator-(const Value &r) const {
+    if (this->isNone() || r.isNone()) {
+        return Value::kNone;
+    }
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ - r.intValue_);
     } else {
@@ -58,6 +69,10 @@ Value Value::operator-(const Value &r) const {
 }
 
 Value Value::operator*(const Value &r) const {
+    if (this->isNone() || r.isNone()) {
+        return Value::kNone;
+    }
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ * r.intValue_);
     } else {
@@ -77,6 +92,10 @@ Value Value::operator*(const Value &r) const {
 }
 
 Value Value::operator/(const Value &r) const {
+    if (this->isNone() || r.isNone()) {
+        return Value::kNone;
+    }
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ / r.intValue_);
     } else {
@@ -96,6 +115,10 @@ Value Value::operator/(const Value &r) const {
 }
 
 Value Value::pow(const Value &r) const {
+    if (this->isNone() || r.isNone()) {
+        return Value::kNone;
+    }
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         /* std::pow always returns floating point type, but if both input
          * values were integer, then result should convert into int nicely,

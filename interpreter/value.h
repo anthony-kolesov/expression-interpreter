@@ -26,6 +26,7 @@
 class Value {
  private:
     enum ValueType {
+        kNoneType,
         kInteger,
         kFloat,
     };
@@ -36,7 +37,13 @@ class Value {
         double floatValue_;
     };
 
+    static const std::string kNoneString;
+
+    explicit Value(ValueType vt) : type_(vt) { }
+
  public:
+    static const Value kNone;
+
     /* This constructor is needed for map<> operations in context.h, but
      * otherwise should never be used.  */
     Value() : type_(kInteger), intValue_(0xDEADBEEF) { }
@@ -53,8 +60,14 @@ class Value {
         }
     }
 
+    bool isNone() const {
+        return (this->type_ == kNoneType);
+    }
+
     const std::string asString() const {
-        if (this->type_ == kInteger) {
+        if (this->type_ == kNoneType) {
+            return kNoneString;
+        } else if (this->type_ == kInteger) {
             return std::to_string(this->intValue_);
         } else {
             return std::to_string(this->floatValue_);
