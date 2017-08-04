@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
+
 #include "value.h"
 
 Value Value::operator+(const Value &r) const {
@@ -92,3 +94,27 @@ Value Value::operator/(const Value &r) const {
         return Value(result);
     }
 }
+
+Value Value::pow(const Value &r) const {
+    if (this->type_ == kInteger && r.type_ == kInteger) {
+        /* std::pow always returns floating point type, but if both input
+         * values were integer, then result should convert into int nicely,
+         * unless, of course, it too big.  */
+        return Value(static_cast<int>(std::pow(this->intValue_, r.intValue_)));
+    } else {
+        double result;
+        if (this->type_ == kInteger) {
+            result = static_cast<double>(this->intValue_);
+        } else {
+            result = this->floatValue_;
+        }
+        if (r.type_ == kInteger) {
+            result = std::pow(result, static_cast<double>(r.intValue_));
+        } else {
+            result = std::pow(result, r.floatValue_);
+        }
+        return Value(result);
+    }
+}
+
+// vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

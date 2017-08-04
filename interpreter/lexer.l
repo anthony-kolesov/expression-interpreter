@@ -42,6 +42,7 @@ PLUS "+"
 MINUS "-"
 DIVIDE "/"
 MULTIPLY "*"
+POW "^"
 
 IDENTIFIER [a-zA-Z_][a-zA-Z_0-9]*
 STRING_LITERAL "\""[^\"]*"\""
@@ -90,6 +91,7 @@ WS [ \r\n\t]*
 }
 
 {ASSIGN} { return TOKEN_ASSIGN; }
+{POW} { return TOKEN_POW; }
 {MULTIPLY} { return TOKEN_MULTIPLY; }
 {DIVIDE} { return TOKEN_DIVIDE; }
 {PLUS} { return TOKEN_PLUS; }

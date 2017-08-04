@@ -113,6 +113,27 @@ class MulExpression : public Expression {
     }
 };
 
+class PowExpression : public Expression {
+ private:
+    Expression *left_;
+    Expression *right_;
+
+ public:
+    PowExpression(Expression* left, Expression* right) {
+        this->left_ = left;
+        this->right_ = right;
+    }
+
+    virtual ~PowExpression() {
+        delete this->left_;
+        delete this->right_;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        return this->left_->evaluate(ctx).pow(this->right_->evaluate(ctx));
+    }
+};
+
 class SubExpression : public Expression {
  private:
     Expression *left_;
