@@ -28,6 +28,9 @@
  */
 class Statement {
  public:
+
+    virtual ~Statement() { }
+
     /**
      * @brief Execute statement.
      */
@@ -44,7 +47,7 @@ class OutStatement : public Statement {
  public:
     explicit OutStatement(const Expression *expr) : expr_(expr) { }
 
-    ~OutStatement() {
+    virtual ~OutStatement() {
         delete expr_;
     }
 
@@ -74,7 +77,7 @@ class VarStatement : public Statement {
     VarStatement(const std::string &name, const Expression *expr) :
             name_(name), expr_(expr) { }
 
-    ~VarStatement() {
+    virtual ~VarStatement() {
         delete this->expr_;
     }
 
