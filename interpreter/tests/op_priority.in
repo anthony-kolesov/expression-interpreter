@@ -1,0 +1,49 @@
+# Confirm that operations execute in proper priority
+
+out 5 + 4 * 3
+print "\n"
+
+out 4 * 3 + 5
+print "\n"
+
+out 5 - 4 * 3
+print "\n"
+
+out 4 * 3 - 5
+print "\n"
+
+out 5 + 12 / 3
+print "\n"
+
+out 12 / 3 + 5
+print "\n"
+
+out 80 - 21 / 7
+print "\n"
+
+out 21 / 7 - 80
+print "\n"
+
+out 4 ^ 3 + 5
+print "\n"
+
+out 5 + 4 ^ 3
+print "\n"
+
+out 4 ^ 3 - 5
+print "\n"
+
+out 5 - 4 ^ 3
+print "\n"
+
+out 4 ^ 3 * 2
+print "\n"
+
+out 2 * 4 ^ 3
+print "\n"
+
+out 4 ^ 3 / 2
+print "\n"
+
+out 256 / 4 ^ 3
+print "\n"

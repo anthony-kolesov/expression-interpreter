@@ -1,0 +1,9 @@
+# Confirm that braces change priority of operations.
+out 4 + 5 * 3
+print "\n"
+
+out (4 + 5) * 3
+print "\n"
+
+out 4 + (5 * 3)
+print "\n"

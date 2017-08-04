@@ -1,0 +1,33 @@
+# Typical operation.
+out 5 ^ 3
+print "\n"
+
+# Relatively big numbers.
+out 10000 ^ 2
+print "\n"
+
+# Crossing the zero.
+out -4 ^ 4
+print "\n"
+
+# Staying negative.
+out -4 ^ 3
+print "\n"
+
+# Floating point numbers.
+out 4.0 ^ 1.5
+print "\n"
+
+# Zero values.
+out 2 ^ 0
+print "\n"
+
+out 0 ^ 2
+print "\n"
+
+out 0 ^ 0
+print "\n"
+
+# By one.
+out 4 ^ 1
+print "\n"
