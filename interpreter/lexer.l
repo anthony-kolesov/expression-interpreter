@@ -39,6 +39,7 @@ ASSIGN "="
 LPAREN "("
 RPAREN ")"
 PLUS "+"
+MINUS "-"
 MULTIPLY "*"
 
 IDENTIFIER [a-zA-Z_][a-zA-Z_0-9]*
@@ -90,6 +91,7 @@ WS [ \r\n\t]*
 {ASSIGN} { return TOKEN_ASSIGN; }
 {MULTIPLY} { return TOKEN_MULTIPLY; }
 {PLUS} { return TOKEN_PLUS; }
+{MINUS} { return TOKEN_MINUS; }
 {LPAREN} { return TOKEN_LPAREN; }
 {RPAREN} { return TOKEN_RPAREN; }
 

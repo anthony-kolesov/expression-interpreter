@@ -92,6 +92,27 @@ class MulExpression : public Expression {
     }
 };
 
+class SubExpression : public Expression {
+ private:
+    Expression *left_;
+    Expression *right_;
+
+ public:
+    SubExpression(Expression* left, Expression* right) {
+        this->left_ = left;
+        this->right_ = right;
+    }
+
+    virtual ~SubExpression() {
+        delete this->left_;
+        delete this->right_;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        return this->left_->evaluate(ctx) - this->right_->evaluate(ctx);
+    }
+};
+
 class ValueExpression : public Expression {
  private:
     Value value_;

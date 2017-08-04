@@ -48,12 +48,14 @@ typedef void* yyscan_t;
 }
 
 %left '+' TOKEN_PLUS
+%left '-' TOKEN_MINUS
 %left '*' TOKEN_MULTIPLY
 %left '=' TOKEN_ASSIGN
 
 %token TOKEN_LPAREN
 %token TOKEN_RPAREN
 %token TOKEN_PLUS
+%token TOKEN_MINUS
 %token TOKEN_MULTIPLY
 %token TOKEN_ASSIGN
 %token <floatValue> TOKEN_FLOAT_NUMBER
@@ -84,6 +86,7 @@ stmt
 
 expr
     : expr[L] TOKEN_PLUS expr[R] { $$ = new AddExpression($L, $R); }
+    | expr[L] TOKEN_MINUS expr[R] { $$ = new SubExpression($L, $R); }
     | expr[L] TOKEN_MULTIPLY expr[R] { $$ = new MulExpression($L, $R); }
     | TOKEN_LPAREN expr[E] TOKEN_RPAREN { $$ = $E; }
     | TOKEN_NUMBER { $$ = new ValueExpression(Value($1));}
