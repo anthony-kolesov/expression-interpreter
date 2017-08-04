@@ -28,7 +28,6 @@
  */
 class Statement {
  public:
-
     virtual ~Statement() { }
 
     /**
