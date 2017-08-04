@@ -22,66 +22,88 @@
 #include "value.h"
 
 /**
- * @brief The operation type
- */
-typedef enum tagEOperationType {
-    eVALUE,
-    eMULTIPLY,
-    ePLUS,
-    eIDENTIFIER,
-} EOperationType;
-
-/**
  * @brief Interpeter expression.
  */
 class Expression {
- private:
-    EOperationType type_;  ///< type of operation
-
-    Value value_;  ///< valid only when type is eVALUE
-    Expression *left_;  ///< left side of the tree
-    Expression *right_;  ///< right side of the tree
-    std::string identifier_;
-
  public:
-    Expression(): type_(eVALUE), value_(Value(0)), left_(nullptr),
-            right_(nullptr), identifier_() { }
+    Expression() { }
 
-    ~Expression() {
-        delete this->left_;
-        delete this->right_;
-    }
-
-    /**
-     * @param value The number value
-     */
-    explicit Expression(const Value &value): Expression() {
-        this->type_ = eVALUE;
-        this->value_ = Value(value);
-    }
-
-    /**
-     * @param type The operation type
-     * @param left The left operand
-     * @param right The right operand
-     */
-    Expression(EOperationType type, Expression* left, Expression* right):
-        Expression() {
-        this->type_ = type;
-        this->left_ = left;
-        this->right_ = right;
-    }
-
-    explicit Expression(const std::string identifier)
-        : Expression() {
-        this->type_ = eIDENTIFIER;
-        this->identifier_ = identifier;
-    }
+    virtual ~Expression() { }
 
     /**
      * @brief Evaluate value of this expression.
      */
-    Value evaluate(Context *ctx) const;
+    virtual Value evaluate(Context *ctx) const = 0;
+};
+
+class AddExpression : public Expression {
+ private:
+    Expression *left_;
+    Expression *right_;
+
+ public:
+    AddExpression(Expression* left, Expression* right) {
+        this->left_ = left;
+        this->right_ = right;
+    }
+
+    virtual ~AddExpression() {
+        delete this->left_;
+        delete this->right_;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        return this->left_->evaluate(ctx) + this->right_->evaluate(ctx);
+    }
+};
+
+class IdentifierExpression : public Expression {
+ private:
+    std::string identifier_;
+
+ public:
+    explicit IdentifierExpression(const std::string &identifier) {
+        this->identifier_ = identifier;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        return ctx->getVariable(this->identifier_);
+    }
+};
+
+class MulExpression : public Expression {
+ private:
+    Expression *left_;
+    Expression *right_;
+
+ public:
+    MulExpression(Expression* left, Expression* right) {
+        this->left_ = left;
+        this->right_ = right;
+    }
+
+    virtual ~MulExpression() {
+        delete this->left_;
+        delete this->right_;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        return this->left_->evaluate(ctx) * this->right_->evaluate(ctx);
+    }
+};
+
+class ValueExpression : public Expression {
+ private:
+    Value value_;
+
+ public:
+    explicit ValueExpression(const Value &v) {
+        this->value_ = v;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        return this->value_;
+    }
 };
 
 #endif  // EXPRESSION_H_
