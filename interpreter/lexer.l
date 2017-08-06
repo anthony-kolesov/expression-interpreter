@@ -38,6 +38,9 @@ VAR "var"
 ASSIGN "="
 LPAREN "("
 RPAREN ")"
+LCURLY "{"
+RCURLY "}"
+COMMA ","
 PLUS "+"
 MINUS "-"
 DIVIDE "/"
@@ -98,6 +101,9 @@ WS [ \r\n\t]*
 {MINUS} { return TOKEN_MINUS; }
 {LPAREN} { return TOKEN_LPAREN; }
 {RPAREN} { return TOKEN_RPAREN; }
+{LCURLY} { return TOKEN_LCURLY; }
+{RCURLY} { return TOKEN_RCURLY; }
+{COMMA} { return TOKEN_COMMA; }
 
 {OUT} { return TOKEN_OUT; }
 {PRINT} { return TOKEN_PRINT; }

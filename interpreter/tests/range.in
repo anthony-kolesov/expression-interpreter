@@ -1,0 +1,6 @@
+out {1, 5}
+print "\n"
+
+var a = {4, 7}
+out a
+print "\n"

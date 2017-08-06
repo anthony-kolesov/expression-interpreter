@@ -19,6 +19,7 @@
 #define VALUE_H_
 
 #include <string>
+#include <sstream>
 
 /* Creating a hierarchy of IntegerValue and FloatValue might be closer to
  * canonical object oriented design, but I'm not sure this would really make
@@ -29,11 +30,15 @@ class Value {
         kNoneType,
         kInteger,
         kFloat,
+        kIntegerRange,
     };
 
     ValueType type_;
     union {
-        int intValue_;
+        struct {
+            int intValue_;
+            int endValue_;
+        };
         double floatValue_;
     };
 
@@ -50,11 +55,16 @@ class Value {
 
     explicit Value(int v) : type_(kInteger), intValue_(v) { }
     explicit Value(double v) : type_(kFloat), floatValue_(v) { }
+    Value(int begin, int end) : type_(kIntegerRange), intValue_(begin),
+            endValue_(end) { }
 
     Value(const Value& v) {
         this->type_ = v.type_;
         if (v.type_ == kInteger) {
             this->intValue_ = v.intValue_;
+        } else if (v.type_ == kIntegerRange) {
+            this->intValue_ = v.intValue_;
+            this->endValue_ = v.endValue_;
         } else {
             this->floatValue_ = v.floatValue_;
         }
@@ -69,8 +79,32 @@ class Value {
             return kNoneString;
         } else if (this->type_ == kInteger) {
             return std::to_string(this->intValue_);
+        } else if (this->type_ == kIntegerRange) {
+            std::stringstream s;
+            s << "{";
+
+            s << this->intValue_;
+            for (auto v = this->next(); !v.isNone(); v = v.next()) {
+                s << ", " << v.intValue_;
+            }
+
+            s << "}";
+            return s.str();
         } else {
             return std::to_string(this->floatValue_);
+        }
+    }
+
+    int asInteger() const {
+        switch (this->type_) {
+            case kIntegerRange:
+            // Fallthrough.
+            case kInteger:
+              return this->intValue_;
+            case kFloat:
+              return static_cast<int>(this->floatValue_);
+            default:
+              return 0;
         }
     }
 
@@ -79,6 +113,20 @@ class Value {
     Value operator*(const Value &r) const;
     Value operator/(const Value &r) const;
     Value pow(const Value &r) const;
+
+    /**
+     * @brief Get next value in a sequence.
+     * @returns Next value in an integer sequence or kNone if this is the last
+     * item in sequence.
+     */
+    Value next() const {
+        if ((this->intValue_ == this->endValue_)
+            || (this->type_ != kIntegerRange)) {
+            return Value::kNone;
+        } else {
+            return Value(this->intValue_ + 1, this->endValue_);
+        }
+    }
 };
 
 #endif  // VALUE_H_

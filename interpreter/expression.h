@@ -134,6 +134,27 @@ class PowExpression : public Expression {
     }
 };
 
+class RangeExpression : public Expression {
+ private:
+    Expression *begin_;
+    Expression *end_;
+
+ public:
+    RangeExpression(Expression* begin, Expression* end) : begin_(begin),
+            end_(end) { }
+
+    virtual ~RangeExpression() {
+        delete this->begin_;
+        delete this->end_;
+    }
+
+    virtual Value evaluate(Context *ctx) const {
+        int begin  = this->begin_->evaluate(ctx).asInteger();
+        int end = this->end_->evaluate(ctx).asInteger();
+        return Value(begin, end);
+    }
+};
+
 class SubExpression : public Expression {
  private:
     Expression *left_;
