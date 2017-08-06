@@ -4,3 +4,18 @@ print "\n"
 var a = {4, 7}
 out a
 print "\n"
+
+out {-5, -3}
+print "\n"
+
+out {-3, 2}
+print "\n"
+
+out {8, 8}
+print "\n"
+
+out {6, 7}
+print "\n"
+
+out {0, 2}
+print "\n"
