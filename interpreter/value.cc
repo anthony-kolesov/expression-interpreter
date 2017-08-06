@@ -27,6 +27,8 @@ Value Value::operator+(const Value &r) const {
         return Value::kNone;
     }
 
+    checkScalarArgs(r);
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ + r.intValue_);
     } else {
@@ -49,6 +51,8 @@ Value Value::operator-(const Value &r) const {
     if (this->isNone() || r.isNone()) {
         return Value::kNone;
     }
+
+    checkScalarArgs(r);
 
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ - r.intValue_);
@@ -73,6 +77,8 @@ Value Value::operator*(const Value &r) const {
         return Value::kNone;
     }
 
+    checkScalarArgs(r);
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ * r.intValue_);
     } else {
@@ -96,6 +102,8 @@ Value Value::operator/(const Value &r) const {
         return Value::kNone;
     }
 
+    checkScalarArgs(r);
+
     if (this->type_ == kInteger && r.type_ == kInteger) {
         return Value(this->intValue_ / r.intValue_);
     } else {
@@ -118,6 +126,8 @@ Value Value::pow(const Value &r) const {
     if (this->isNone() || r.isNone()) {
         return Value::kNone;
     }
+
+    checkScalarArgs(r);
 
     if (this->type_ == kInteger && r.type_ == kInteger) {
         /* std::pow always returns floating point type, but if both input

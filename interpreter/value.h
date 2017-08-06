@@ -18,8 +18,9 @@
 #ifndef VALUE_H_
 #define VALUE_H_
 
-#include <string>
 #include <sstream>
+#include <stdexcept>
+#include <string>
 
 /* Creating a hierarchy of IntegerValue and FloatValue might be closer to
  * canonical object oriented design, but I'm not sure this would really make
@@ -45,6 +46,17 @@ class Value {
     static const std::string kNoneString;
 
     explicit Value(ValueType vt) : type_(vt) { }
+
+    /**
+     * @brief Check that arguments are valid for scalar arithmetic operations,
+     * i.e. are not range values.
+     */
+    bool checkScalarArgs(const Value &r) const {
+        if ((this->type_ == kIntegerRange) || (r.type_ == kIntegerRange)) {
+            auto msg = "Cannor perform arithmetic operation on range values.";
+            throw std::invalid_argument(msg);
+        }
+    }
 
  public:
     static const Value kNone;
