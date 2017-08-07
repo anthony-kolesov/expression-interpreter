@@ -82,6 +82,35 @@ class IdentifierExpression : public Expression {
     }
 };
 
+class MapExpression : public Expression {
+ private:
+    std::string paramName_;
+    std::unique_ptr<const Expression> input_;
+    std::unique_ptr<const Expression> func_;
+
+ public:
+    MapExpression(const Expression *input, const std::string &paramName,
+                  const Expression *func)
+        : input_(input), paramName_(paramName), func_(func) {
+    }
+
+    virtual ValuePtr evaluate(Context *ctx) const {
+        std::vector<ValuePtr> seq;
+        Context funcCtx;
+        for (auto i = this->input_->evaluate(ctx);
+             !i->isNone();
+             i = i->next()) {
+            /* i is a range value, but context should contain a scalar value -
+             * current value in a range.  */
+            auto param = std::make_shared<const Value>(i->asInteger());
+            funcCtx.setVariable(this->paramName_, param);
+            auto newValue = this->func_->evaluate(&funcCtx);
+            seq.push_back(newValue);
+        }
+        return std::make_shared<const VectorValue>(seq, 0);
+    }
+};
+
 class MulExpression : public Expression {
  private:
     std::unique_ptr<const Expression> left_;

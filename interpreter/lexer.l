@@ -32,6 +32,7 @@
 
 COMMENT #.*
 OUT "out"
+MAP "map"
 PRINT "print"
 VAR "var"
 
@@ -46,6 +47,7 @@ MINUS "-"
 DIVIDE "/"
 MULTIPLY "*"
 POW "^"
+LAMBDA "->"
 
 IDENTIFIER [a-zA-Z_][a-zA-Z_0-9]*
 STRING_LITERAL "\""[^\"]*"\""
@@ -93,6 +95,7 @@ WS [ \r\n\t]*
     return TOKEN_STRING;
 }
 
+{LAMBDA} { return TOKEN_LAMBDA; }
 {ASSIGN} { return TOKEN_ASSIGN; }
 {POW} { return TOKEN_POW; }
 {MULTIPLY} { return TOKEN_MULTIPLY; }
@@ -106,6 +109,7 @@ WS [ \r\n\t]*
 {COMMA} { return TOKEN_COMMA; }
 
 {OUT} { return TOKEN_OUT; }
+{MAP} { return TOKEN_MAP; }
 {PRINT} { return TOKEN_PRINT; }
 {VAR} { return TOKEN_VAR; }
 

@@ -1,0 +1,7 @@
+var m = map({1, 5}, i -> i * 2)
+out m
+print "\n"
+
+var f = map({10, 15}, w->w+1.5 )
+out f
+print "\n"

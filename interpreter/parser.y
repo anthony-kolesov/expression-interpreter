@@ -65,11 +65,13 @@ typedef void* yyscan_t;
 %token TOKEN_DIVIDE
 %token TOKEN_POW
 %token TOKEN_ASSIGN
+%token TOKEN_LAMBDA
 %token <floatValue> TOKEN_FLOAT_NUMBER
 %token <value> TOKEN_NUMBER
 %token <strvalue> TOKEN_STRING
 %token <identifier> TOKEN_IDENTIFIER
 %token TOKEN_OUT
+%token TOKEN_MAP
 %token TOKEN_PRINT
 %token TOKEN_VAR
 
@@ -103,6 +105,10 @@ expr
     | TOKEN_IDENTIFIER { $$ = new IdentifierExpression(std::string($1)); }
     | TOKEN_LCURLY expr[B] TOKEN_COMMA expr[E] TOKEN_RCURLY {
         $$ = new RangeExpression($B, $E);
+    }
+    | TOKEN_MAP TOKEN_LPAREN expr[E] TOKEN_COMMA TOKEN_IDENTIFIER[I]
+        TOKEN_LAMBDA expr[L] TOKEN_RPAREN {
+        $$ = new MapExpression($E, $I, $L);
     }
     ;
 
