@@ -51,7 +51,7 @@ class OutStatement : public Statement {
     }
 
     virtual void execute(Context *ctx) {
-        std::cout << this->expr_->evaluate(ctx).asString();
+        std::cout << this->expr_->evaluate(ctx)->asString();
     }
 };
 

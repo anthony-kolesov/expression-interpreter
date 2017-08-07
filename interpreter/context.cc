@@ -19,11 +19,11 @@
 #include <sstream>
 #include <stdexcept>
 
-void Context::setVariable(const std::string &name, const Value &value) {
+void Context::setVariable(const std::string &name, ValuePtr value) {
     this->variables_[name] = value;
 }
 
-Value Context::getVariable(const std::string &name) {
+ValuePtr Context::getVariable(const std::string &name) {
     if (this->variables_.count(name) == 0) {
         std::stringstream s;
         s << "Unknown identifier: " << name;

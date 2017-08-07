@@ -18,9 +18,13 @@
 #ifndef VALUE_H_
 #define VALUE_H_
 
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+
+class Value;
+typedef std::shared_ptr<const Value> ValuePtr;
 
 /* Creating a hierarchy of IntegerValue and FloatValue might be closer to
  * canonical object oriented design, but I'm not sure this would really make
@@ -51,15 +55,15 @@ class Value {
      * @brief Check that arguments are valid for scalar arithmetic operations,
      * i.e. are not range values.
      */
-    bool checkScalarArgs(const Value &r) const {
-        if ((this->type_ == kIntegerRange) || (r.type_ == kIntegerRange)) {
+    void checkScalarArgs(const ValuePtr &r) const {
+        if ((this->type_ == kIntegerRange) || (r->type_ == kIntegerRange)) {
             auto msg = "Cannor perform arithmetic operation on range values.";
             throw std::invalid_argument(msg);
         }
     }
 
  public:
-    static const Value kNone;
+    static const ValuePtr kNone;
 
     /* This constructor is needed for map<> operations in context.h, but
      * otherwise should never be used.  */
@@ -96,8 +100,8 @@ class Value {
             s << "{";
 
             s << this->intValue_;
-            for (auto v = this->next(); !v.isNone(); v = v.next()) {
-                s << ", " << v.intValue_;
+            for (auto v = this->next(); !v->isNone(); v = v->next()) {
+                s << ", " << v->intValue_;
             }
 
             s << "}";
@@ -120,23 +124,24 @@ class Value {
         }
     }
 
-    Value operator+(const Value &r) const;
-    Value operator-(const Value &r) const;
-    Value operator*(const Value &r) const;
-    Value operator/(const Value &r) const;
-    Value pow(const Value &r) const;
+    ValuePtr add(const ValuePtr &r) const;
+    ValuePtr sub(const ValuePtr &r) const;
+    ValuePtr mul(const ValuePtr &r) const;
+    ValuePtr div(const ValuePtr &r) const;
+    ValuePtr pow(const ValuePtr &r) const;
 
     /**
      * @brief Get next value in a sequence.
      * @returns Next value in an integer sequence or kNone if this is the last
      * item in sequence.
      */
-    Value next() const {
+    ValuePtr next() const {
         if ((this->intValue_ == this->endValue_)
             || (this->type_ != kIntegerRange)) {
             return Value::kNone;
         } else {
-            return Value(this->intValue_ + 1, this->endValue_);
+            return std::make_shared<const Value>(this->intValue_ + 1,
+                                                 this->endValue_);
         }
     }
 };

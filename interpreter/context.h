@@ -28,13 +28,13 @@
  */
 class Context {
  private:
-    std::unordered_map<std::string, Value> variables_;
+    std::unordered_map<std::string, ValuePtr> variables_;
 
  public:
     Context() : variables_() { }
 
-    void setVariable(const std::string &name, const Value &value);
-    Value getVariable(const std::string &name);
+    void setVariable(const std::string &name, ValuePtr value);
+    ValuePtr getVariable(const std::string &name);
 };
 
 #endif  // CONTEXT_H_

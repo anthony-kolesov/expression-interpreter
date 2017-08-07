@@ -33,7 +33,7 @@ class Expression {
     /**
      * @brief Evaluate value of this expression.
      */
-    virtual Value evaluate(Context *ctx) const = 0;
+    virtual ValuePtr evaluate(Context *ctx) const = 0;
 };
 
 class AddExpression : public Expression {
@@ -52,8 +52,9 @@ class AddExpression : public Expression {
         delete this->right_;
     }
 
-    virtual Value evaluate(Context *ctx) const {
-        return this->left_->evaluate(ctx) + this->right_->evaluate(ctx);
+    virtual ValuePtr evaluate(Context *ctx) const {
+        auto l = this->left_->evaluate(ctx);
+        return l->add(this->right_->evaluate(ctx));
     }
 };
 
@@ -73,8 +74,9 @@ class DivExpression : public Expression {
         delete this->right_;
     }
 
-    virtual Value evaluate(Context *ctx) const {
-        return this->left_->evaluate(ctx) / this->right_->evaluate(ctx);
+    virtual ValuePtr evaluate(Context *ctx) const {
+        auto l = this->left_->evaluate(ctx);
+        return l->div(this->right_->evaluate(ctx));
     }
 };
 
@@ -87,7 +89,7 @@ class IdentifierExpression : public Expression {
         this->identifier_ = identifier;
     }
 
-    virtual Value evaluate(Context *ctx) const {
+    virtual ValuePtr evaluate(Context *ctx) const {
         return ctx->getVariable(this->identifier_);
     }
 };
@@ -108,8 +110,9 @@ class MulExpression : public Expression {
         delete this->right_;
     }
 
-    virtual Value evaluate(Context *ctx) const {
-        return this->left_->evaluate(ctx) * this->right_->evaluate(ctx);
+    virtual ValuePtr evaluate(Context *ctx) const {
+        auto l = this->left_->evaluate(ctx);
+        return l->mul(this->right_->evaluate(ctx));
     }
 };
 
@@ -129,8 +132,9 @@ class PowExpression : public Expression {
         delete this->right_;
     }
 
-    virtual Value evaluate(Context *ctx) const {
-        return this->left_->evaluate(ctx).pow(this->right_->evaluate(ctx));
+    virtual ValuePtr evaluate(Context *ctx) const {
+        auto l = this->left_->evaluate(ctx);
+        return l->pow(this->right_->evaluate(ctx));
     }
 };
 
@@ -148,10 +152,10 @@ class RangeExpression : public Expression {
         delete this->end_;
     }
 
-    virtual Value evaluate(Context *ctx) const {
-        int begin  = this->begin_->evaluate(ctx).asInteger();
-        int end = this->end_->evaluate(ctx).asInteger();
-        return Value(begin, end);
+    virtual ValuePtr evaluate(Context *ctx) const {
+        int begin  = this->begin_->evaluate(ctx)->asInteger();
+        int end = this->end_->evaluate(ctx)->asInteger();
+        return std::make_shared<const Value>(begin, end);
     }
 };
 
@@ -171,21 +175,22 @@ class SubExpression : public Expression {
         delete this->right_;
     }
 
-    virtual Value evaluate(Context *ctx) const {
-        return this->left_->evaluate(ctx) - this->right_->evaluate(ctx);
+    virtual ValuePtr evaluate(Context *ctx) const {
+        auto l = this->left_->evaluate(ctx);
+        return l->sub(this->right_->evaluate(ctx));
     }
 };
 
 class ValueExpression : public Expression {
  private:
-    Value value_;
+    ValuePtr value_;
 
  public:
     explicit ValueExpression(const Value &v) {
-        this->value_ = v;
+        this->value_ = std::make_shared<const Value>(v);
     }
 
-    virtual Value evaluate(Context *ctx) const {
+    virtual ValuePtr evaluate(Context *ctx) const {
         return this->value_;
     }
 };

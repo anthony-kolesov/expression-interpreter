@@ -20,17 +20,19 @@
 #include "value.h"
 
 const std::string Value::kNoneString = "(none)";
-const Value Value::kNone = Value(ValueType::kNoneType);
+/* Can't use std::make_shared, because a private constructor is used.  */
+const ValuePtr Value::kNone
+    = std::shared_ptr<const Value>(new Value(ValueType::kNoneType));
 
-Value Value::operator+(const Value &r) const {
-    if (this->isNone() || r.isNone()) {
-        return Value::kNone;
+ValuePtr Value::add(const ValuePtr &r) const {
+    if (this->isNone() || r->isNone()) {
+        return kNone;
     }
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r.type_ == kInteger) {
-        return Value(this->intValue_ + r.intValue_);
+    if (this->type_ == kInteger && r->type_ == kInteger) {
+        return std::make_shared<const Value>(this->intValue_ + r->intValue_);
     } else {
         double result;
         if (this->type_ == kInteger) {
@@ -38,24 +40,24 @@ Value Value::operator+(const Value &r) const {
         } else {
             result = this->floatValue_;
         }
-        if (r.type_ == kInteger) {
-            result += static_cast<double>(r.intValue_);
+        if (r->type_ == kInteger) {
+            result += static_cast<double>(r->intValue_);
         } else {
-            result += r.floatValue_;
+            result += r->floatValue_;
         }
-        return Value(result);
+        return std::make_shared<const Value>(result);
     }
 }
 
-Value Value::operator-(const Value &r) const {
-    if (this->isNone() || r.isNone()) {
-        return Value::kNone;
+ValuePtr Value::sub(const ValuePtr &r) const {
+    if (this->isNone() || r->isNone()) {
+        return kNone;
     }
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r.type_ == kInteger) {
-        return Value(this->intValue_ - r.intValue_);
+    if (this->type_ == kInteger && r->type_ == kInteger) {
+        return std::make_shared<const Value>(this->intValue_ - r->intValue_);
     } else {
         double result;
         if (this->type_ == kInteger) {
@@ -63,24 +65,24 @@ Value Value::operator-(const Value &r) const {
         } else {
             result = this->floatValue_;
         }
-        if (r.type_ == kInteger) {
-            result -= static_cast<double>(r.intValue_);
+        if (r->type_ == kInteger) {
+            result -= static_cast<double>(r->intValue_);
         } else {
-            result -= r.floatValue_;
+            result -= r->floatValue_;
         }
-        return Value(result);
+        return std::make_shared<const Value>(result);
     }
 }
 
-Value Value::operator*(const Value &r) const {
-    if (this->isNone() || r.isNone()) {
-        return Value::kNone;
+ValuePtr Value::mul(const ValuePtr &r) const {
+    if (this->isNone() || r->isNone()) {
+        return kNone;
     }
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r.type_ == kInteger) {
-        return Value(this->intValue_ * r.intValue_);
+    if (this->type_ == kInteger && r->type_ == kInteger) {
+        return std::make_shared<const Value>(this->intValue_ * r->intValue_);
     } else {
         double result;
         if (this->type_ == kInteger) {
@@ -88,24 +90,24 @@ Value Value::operator*(const Value &r) const {
         } else {
             result = this->floatValue_;
         }
-        if (r.type_ == kInteger) {
-            result *= static_cast<double>(r.intValue_);
+        if (r->type_ == kInteger) {
+            result *= static_cast<double>(r->intValue_);
         } else {
-            result *= r.floatValue_;
+            result *= r->floatValue_;
         }
-        return Value(result);
+        return std::make_shared<const Value>(result);
     }
 }
 
-Value Value::operator/(const Value &r) const {
-    if (this->isNone() || r.isNone()) {
-        return Value::kNone;
+ValuePtr Value::div(const ValuePtr &r) const {
+    if (this->isNone() || r->isNone()) {
+        return kNone;
     }
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r.type_ == kInteger) {
-        return Value(this->intValue_ / r.intValue_);
+    if (this->type_ == kInteger && r->type_ == kInteger) {
+        return std::make_shared<const Value>(this->intValue_ / r->intValue_);
     } else {
         double result;
         if (this->type_ == kInteger) {
@@ -113,27 +115,28 @@ Value Value::operator/(const Value &r) const {
         } else {
             result = this->floatValue_;
         }
-        if (r.type_ == kInteger) {
-            result /= static_cast<double>(r.intValue_);
+        if (r->type_ == kInteger) {
+            result /= static_cast<double>(r->intValue_);
         } else {
-            result /= r.floatValue_;
+            result /= r->floatValue_;
         }
-        return Value(result);
+        return std::make_shared<const Value>(result);
     }
 }
 
-Value Value::pow(const Value &r) const {
-    if (this->isNone() || r.isNone()) {
-        return Value::kNone;
+ValuePtr Value::pow(const ValuePtr &r) const {
+    if (this->isNone() || r->isNone()) {
+        return kNone;
     }
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r.type_ == kInteger) {
+    if (this->type_ == kInteger && r->type_ == kInteger) {
         /* std::pow always returns floating point type, but if both input
          * values were integer, then result should convert into int nicely,
          * unless, of course, it too big.  */
-        return Value(static_cast<int>(std::pow(this->intValue_, r.intValue_)));
+        auto v = std::pow(this->intValue_, r->intValue_);
+        return std::make_shared<const Value>(static_cast<int>(v));
     } else {
         double result;
         if (this->type_ == kInteger) {
@@ -141,12 +144,12 @@ Value Value::pow(const Value &r) const {
         } else {
             result = this->floatValue_;
         }
-        if (r.type_ == kInteger) {
-            result = std::pow(result, static_cast<double>(r.intValue_));
+        if (r->type_ == kInteger) {
+            result = std::pow(result, static_cast<double>(r->intValue_));
         } else {
-            result = std::pow(result, r.floatValue_);
+            result = std::pow(result, r->floatValue_);
         }
-        return Value(result);
+        return std::make_shared<const Value>(result);
     }
 }
 
