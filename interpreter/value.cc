@@ -19,7 +19,7 @@
 
 #include "value.h"
 
-const std::string Value::kNoneString = "(none)";
+const char Value::kNoneString[] = "(none)";
 /* Can't use std::make_shared, because a private constructor is used.  */
 const ValuePtr Value::kNone
     = std::shared_ptr<const Value>(new Value(ValueType::kNoneType));

@@ -47,7 +47,7 @@ class Value {
         double floatValue_;
     };
 
-    static const std::string kNoneString;
+    static const char kNoneString[];
 
     explicit Value(ValueType vt) : type_(vt) { }
 
