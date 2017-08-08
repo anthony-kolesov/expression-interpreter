@@ -38,18 +38,12 @@ class Expression {
 
 class AddExpression : public Expression {
  private:
-    Expression *left_;
-    Expression *right_;
+    std::unique_ptr<const Expression> left_;
+    std::unique_ptr<const Expression> right_;
 
  public:
-    AddExpression(Expression* left, Expression* right) {
-        this->left_ = left;
-        this->right_ = right;
-    }
-
-    virtual ~AddExpression() {
-        delete this->left_;
-        delete this->right_;
+    AddExpression(const Expression* left, const Expression* right)
+        : left_(left), right_(right) {
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {
@@ -60,18 +54,12 @@ class AddExpression : public Expression {
 
 class DivExpression : public Expression {
  private:
-    Expression *left_;
-    Expression *right_;
+    std::unique_ptr<const Expression> left_;
+    std::unique_ptr<const Expression> right_;
 
  public:
-    DivExpression(Expression* left, Expression* right) {
-        this->left_ = left;
-        this->right_ = right;
-    }
-
-    virtual ~DivExpression() {
-        delete this->left_;
-        delete this->right_;
+    DivExpression(const Expression* left, const Expression* right)
+        : left_(left), right_(right) {
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {
@@ -85,8 +73,8 @@ class IdentifierExpression : public Expression {
     std::string identifier_;
 
  public:
-    explicit IdentifierExpression(const std::string &identifier) {
-        this->identifier_ = identifier;
+    explicit IdentifierExpression(const std::string &identifier)
+        : identifier_(identifier) {
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {
@@ -96,18 +84,12 @@ class IdentifierExpression : public Expression {
 
 class MulExpression : public Expression {
  private:
-    Expression *left_;
-    Expression *right_;
+    std::unique_ptr<const Expression> left_;
+    std::unique_ptr<const Expression> right_;
 
  public:
-    MulExpression(Expression* left, Expression* right) {
-        this->left_ = left;
-        this->right_ = right;
-    }
-
-    virtual ~MulExpression() {
-        delete this->left_;
-        delete this->right_;
+    MulExpression(const Expression* left, const Expression* right)
+        : left_(left), right_(right) {
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {
@@ -118,18 +100,12 @@ class MulExpression : public Expression {
 
 class PowExpression : public Expression {
  private:
-    Expression *left_;
-    Expression *right_;
+    std::unique_ptr<const Expression> left_;
+    std::unique_ptr<const Expression> right_;
 
  public:
-    PowExpression(Expression* left, Expression* right) {
-        this->left_ = left;
-        this->right_ = right;
-    }
-
-    virtual ~PowExpression() {
-        delete this->left_;
-        delete this->right_;
+    PowExpression(const Expression* left, const Expression* right)
+        : left_(left), right_(right) {
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {
@@ -140,16 +116,12 @@ class PowExpression : public Expression {
 
 class RangeExpression : public Expression {
  private:
-    Expression *begin_;
-    Expression *end_;
+    std::unique_ptr<const Expression> begin_;
+    std::unique_ptr<const Expression> end_;
 
  public:
-    RangeExpression(Expression* begin, Expression* end) : begin_(begin),
-            end_(end) { }
-
-    virtual ~RangeExpression() {
-        delete this->begin_;
-        delete this->end_;
+    RangeExpression(const Expression* begin, const Expression* end)
+        : begin_(begin), end_(end) {
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {
@@ -161,18 +133,12 @@ class RangeExpression : public Expression {
 
 class SubExpression : public Expression {
  private:
-    Expression *left_;
-    Expression *right_;
+    std::unique_ptr<const Expression> left_;
+    std::unique_ptr<const Expression> right_;
 
  public:
-    SubExpression(Expression* left, Expression* right) {
-        this->left_ = left;
-        this->right_ = right;
-    }
-
-    virtual ~SubExpression() {
-        delete this->left_;
-        delete this->right_;
+    SubExpression(const Expression* left, const Expression* right)
+        : left_(left), right_(right) {
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {
