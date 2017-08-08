@@ -22,6 +22,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 class Value;
 typedef std::shared_ptr<const Value> ValuePtr;
@@ -90,7 +91,7 @@ class Value {
         return (this->type_ == kNoneType);
     }
 
-    const std::string asString() const {
+    virtual const std::string asString() const {
         if (this->type_ == kNoneType) {
             return kNoneString;
         } else if (this->type_ == kInteger) {
@@ -135,7 +136,7 @@ class Value {
      * @returns Next value in an integer sequence or kNone if this is the last
      * item in sequence.
      */
-    ValuePtr next() const {
+    virtual ValuePtr next() const {
         if ((this->intValue_ == this->endValue_)
             || (this->type_ != kIntegerRange)) {
             return Value::kNone;
@@ -143,6 +144,30 @@ class Value {
             return std::make_shared<const Value>(this->intValue_ + 1,
                                                  this->endValue_);
         }
+    }
+};
+
+class VectorValue : public Value {
+ private:
+    std::vector<ValuePtr> sequence_;
+    int index_;
+
+ public:
+    VectorValue(const std::vector<ValuePtr> &v, int index)
+        : Value(*v[index]), sequence_(v), index_(index) {
+    }
+
+    virtual const std::string asString() const {
+        std::stringstream s;
+        s << "{";
+
+        s << this->sequence_[this->index_]->asString();
+        for (int i = this->index_ + 1; i < this->sequence_.size(); i++) {
+            s << ", " << this->sequence_[i]->asString();
+        }
+
+        s << "}";
+        return s.str();
     }
 };
 
