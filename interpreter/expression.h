@@ -156,7 +156,7 @@ class RangeExpression : public Expression {
     virtual ValuePtr evaluate(Context *ctx) const {
         int begin  = this->begin_->evaluate(ctx)->asInteger();
         int end = this->end_->evaluate(ctx)->asInteger();
-        return std::make_shared<const Value>(begin, end);
+        return std::make_shared<const IntegerRangeValue>(begin, end);
     }
 };
 

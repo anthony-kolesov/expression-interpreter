@@ -153,4 +153,26 @@ ValuePtr Value::pow(const ValuePtr &r) const {
     }
 }
 
+const std::string IntegerRangeValue::asString() const {
+    std::stringstream s;
+    s << "{";
+
+    s << this->intValue_;
+    for (auto v = this->next(); !v->isNone(); v = v->next()) {
+        s << ", " << v->intValue_;
+    }
+
+    s << "}";
+    return s.str();
+}
+
+ValuePtr IntegerRangeValue::next() const {
+    if (this->current_ == this->end_) {
+        return Value::kNone;
+    } else {
+        return std::make_shared<const IntegerRangeValue>(this->current_ + 1,
+                                                         this->end_);
+    }
+}
+
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

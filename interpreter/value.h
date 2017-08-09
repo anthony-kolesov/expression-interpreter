@@ -36,14 +36,12 @@ class Value {
         kNoneType,
         kInteger,
         kFloat,
-        kIntegerRange,
     };
 
     ValueType type_;
     union {
         struct {
             int intValue_;
-            int endValue_;
         };
         double floatValue_;
     };
@@ -57,10 +55,15 @@ class Value {
      * i.e. are not range values.
      */
     void checkScalarArgs(const ValuePtr &r) const {
-        if ((this->type_ == kIntegerRange) || (r->type_ == kIntegerRange)) {
+        if (!this->isScalar() || !r->isScalar()) {
             auto msg = "Cannor perform arithmetic operation on range values.";
             throw std::invalid_argument(msg);
         }
+    }
+
+ protected:
+    virtual bool isScalar() const {
+        return true;
     }
 
  public:
@@ -72,16 +75,11 @@ class Value {
 
     explicit Value(int v) : type_(kInteger), intValue_(v) { }
     explicit Value(double v) : type_(kFloat), floatValue_(v) { }
-    Value(int begin, int end) : type_(kIntegerRange), intValue_(begin),
-            endValue_(end) { }
 
     Value(const Value& v) {
         this->type_ = v.type_;
         if (v.type_ == kInteger) {
             this->intValue_ = v.intValue_;
-        } else if (v.type_ == kIntegerRange) {
-            this->intValue_ = v.intValue_;
-            this->endValue_ = v.endValue_;
         } else {
             this->floatValue_ = v.floatValue_;
         }
@@ -96,17 +94,6 @@ class Value {
             return kNoneString;
         } else if (this->type_ == kInteger) {
             return std::to_string(this->intValue_);
-        } else if (this->type_ == kIntegerRange) {
-            std::stringstream s;
-            s << "{";
-
-            s << this->intValue_;
-            for (auto v = this->next(); !v->isNone(); v = v->next()) {
-                s << ", " << v->intValue_;
-            }
-
-            s << "}";
-            return s.str();
         } else {
             return std::to_string(this->floatValue_);
         }
@@ -114,8 +101,6 @@ class Value {
 
     int asInteger() const {
         switch (this->type_) {
-            case kIntegerRange:
-            // Fallthrough.
             case kInteger:
               return this->intValue_;
             case kFloat:
@@ -137,13 +122,7 @@ class Value {
      * item in sequence.
      */
     virtual ValuePtr next() const {
-        if ((this->intValue_ == this->endValue_)
-            || (this->type_ != kIntegerRange)) {
-            return Value::kNone;
-        } else {
-            return std::make_shared<const Value>(this->intValue_ + 1,
-                                                 this->endValue_);
-        }
+        return Value::kNone;
     }
 };
 
@@ -169,6 +148,35 @@ class VectorValue : public Value {
         s << "}";
         return s.str();
     }
+};
+
+class IntegerRangeValue : public Value {
+ private:
+    int current_;
+    int end_;
+
+ protected:
+    virtual bool isScalar() const {
+        return false;
+    }
+
+ public:
+    IntegerRangeValue(int begin, int end)
+        : Value(begin), current_(begin), end_(end) {
+    }
+
+    virtual const std::string asString() const;
+
+    int asInteger() const {
+        return this->current_;
+    }
+
+    /**
+     * @brief Get next value in a sequence.
+     * @returns Next value in an integer sequence or kNone if this is the last
+     * item in sequence.
+     */
+    virtual ValuePtr next() const;
 };
 
 #endif  // VALUE_H_
