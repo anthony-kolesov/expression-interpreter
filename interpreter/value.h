@@ -33,7 +33,6 @@ typedef std::shared_ptr<const Value> ValuePtr;
 class Value {
  private:
     enum ValueType {
-        kNoneType,
         kInteger,
         kFloat,
     };
@@ -45,8 +44,6 @@ class Value {
         };
         double floatValue_;
     };
-
-    static const char kNoneString[];
 
     explicit Value(ValueType vt) : type_(vt) { }
 
@@ -85,14 +82,12 @@ class Value {
         }
     }
 
-    bool isNone() const {
-        return (this->type_ == kNoneType);
+    virtual bool isNone() const {
+        return false;
     }
 
     virtual const std::string asString() const {
-        if (this->type_ == kNoneType) {
-            return kNoneString;
-        } else if (this->type_ == kInteger) {
+        if (this->type_ == kInteger) {
             return std::to_string(this->intValue_);
         } else {
             return std::to_string(this->floatValue_);
@@ -123,6 +118,18 @@ class Value {
      */
     virtual ValuePtr next() const {
         return Value::kNone;
+    }
+};
+
+class NoneValue : public Value {
+ public:
+    virtual const std::string asString() const {
+        static const std::string s = "(none)";
+        return s;
+    }
+
+    virtual bool isNone() const {
+        return true;
     }
 };
 
