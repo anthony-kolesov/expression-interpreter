@@ -31,22 +31,7 @@ typedef std::shared_ptr<const Value> ValuePtr;
  * canonical object oriented design, but I'm not sure this would really make
  * code any simpler. */
 class Value {
- private:
-    enum ValueType {
-        kInteger,
-        kFloat,
-    };
-
-    ValueType type_;
-    union {
-        struct {
-            int intValue_;
-        };
-        double floatValue_;
-    };
-
-    explicit Value(ValueType vt) : type_(vt) { }
-
+ protected:
     /**
      * @brief Check that arguments are valid for scalar arithmetic operations,
      * i.e. are not range values.
@@ -58,51 +43,27 @@ class Value {
         }
     }
 
- protected:
     virtual bool isScalar() const {
         return true;
+    }
+
+    virtual bool isScalarFloat() const {
+        return false;
     }
 
  public:
     static const ValuePtr kNone;
 
-    /* This constructor is needed for map<> operations in context.h, but
-     * otherwise should never be used.  */
-    Value() : type_(kInteger), intValue_(0xDEADBEEF) { }
-
-    explicit Value(int v) : type_(kInteger), intValue_(v) { }
-    explicit Value(double v) : type_(kFloat), floatValue_(v) { }
-
-    Value(const Value& v) {
-        this->type_ = v.type_;
-        if (v.type_ == kInteger) {
-            this->intValue_ = v.intValue_;
-        } else {
-            this->floatValue_ = v.floatValue_;
-        }
-    }
-
     virtual bool isNone() const {
         return false;
     }
 
-    virtual const std::string asString() const {
-        if (this->type_ == kInteger) {
-            return std::to_string(this->intValue_);
-        } else {
-            return std::to_string(this->floatValue_);
-        }
-    }
+    virtual const std::string asString() const = 0;
 
-    int asInteger() const {
-        switch (this->type_) {
-            case kInteger:
-              return this->intValue_;
-            case kFloat:
-              return static_cast<int>(this->floatValue_);
-            default:
-              return 0;
-        }
+    virtual int asInteger() const = 0;
+
+    virtual double asFloat() const {
+        return static_cast<double>(this->asInteger());
     }
 
     ValuePtr add(const ValuePtr &r) const;
@@ -123,6 +84,9 @@ class Value {
 
 class NoneValue : public Value {
  public:
+    virtual int asInteger() const {
+        return 0xdeadbeef;
+    }
     virtual const std::string asString() const {
         static const std::string s = "(none)";
         return s;
@@ -141,6 +105,10 @@ class VectorValue : public Value {
  public:
     VectorValue(const std::vector<ValuePtr> &v, int index)
         : Value(*v[index]), sequence_(v), index_(index) {
+    }
+
+    virtual int asInteger() const {
+        return this->sequence_[this->index_]->asInteger();
     }
 
     virtual const std::string asString() const {
@@ -169,12 +137,12 @@ class IntegerRangeValue : public Value {
 
  public:
     IntegerRangeValue(int begin, int end)
-        : Value(begin), current_(begin), end_(end) {
+        : current_(begin), end_(end) {
     }
 
     virtual const std::string asString() const;
 
-    int asInteger() const {
+    virtual int asInteger() const {
         return this->current_;
     }
 
@@ -184,6 +152,56 @@ class IntegerRangeValue : public Value {
      * item in sequence.
      */
     virtual ValuePtr next() const;
+};
+
+class ScalarValue : public Value {
+ private:
+    enum ValueType {
+        kInteger,
+        kFloat,
+    };
+
+    ValueType type_;
+    union {
+        int intValue_;
+        double floatValue_;
+    };
+
+    explicit ScalarValue(ValueType vt) : type_(vt) { }
+
+ protected:
+    virtual bool isScalar() const {
+        return true;
+    }
+
+    virtual bool isScalarFloat() const {
+        return (this->type_ == kFloat);
+    }
+
+ public:
+    explicit ScalarValue(int v)
+        : type_(kInteger), intValue_(v) {
+    }
+
+    explicit ScalarValue(double v)
+        : type_(kFloat), floatValue_(v) {
+    }
+
+    ScalarValue(const ScalarValue& v)
+        : Value(v) {
+        this->type_ = v.type_;
+        if (v.type_ == kInteger) {
+            this->intValue_ = v.intValue_;
+        } else {
+            this->floatValue_ = v.floatValue_;
+        }
+    }
+
+    virtual const std::string asString() const;
+
+    virtual int asInteger() const;
+
+    double asFloat() const;
 };
 
 #endif  // VALUE_H_

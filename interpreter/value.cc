@@ -28,21 +28,12 @@ ValuePtr Value::add(const ValuePtr &r) const {
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r->type_ == kInteger) {
-        return std::make_shared<const Value>(this->intValue_ + r->intValue_);
+    if (!this->isScalarFloat() && !r->isScalarFloat()) {
+        auto result = this->asInteger() + r->asInteger();
+        return std::make_shared<const ScalarValue>(result);
     } else {
-        double result;
-        if (this->type_ == kInteger) {
-            result = static_cast<double>(this->intValue_);
-        } else {
-            result = this->floatValue_;
-        }
-        if (r->type_ == kInteger) {
-            result += static_cast<double>(r->intValue_);
-        } else {
-            result += r->floatValue_;
-        }
-        return std::make_shared<const Value>(result);
+        auto result = this->asFloat() + r->asFloat();
+        return std::make_shared<const ScalarValue>(result);
     }
 }
 
@@ -53,21 +44,12 @@ ValuePtr Value::sub(const ValuePtr &r) const {
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r->type_ == kInteger) {
-        return std::make_shared<const Value>(this->intValue_ - r->intValue_);
+    if (!this->isScalarFloat() && !r->isScalarFloat()) {
+        auto result = this->asInteger() - r->asInteger();
+        return std::make_shared<const ScalarValue>(result);
     } else {
-        double result;
-        if (this->type_ == kInteger) {
-            result = static_cast<double>(this->intValue_);
-        } else {
-            result = this->floatValue_;
-        }
-        if (r->type_ == kInteger) {
-            result -= static_cast<double>(r->intValue_);
-        } else {
-            result -= r->floatValue_;
-        }
-        return std::make_shared<const Value>(result);
+        auto result = this->asFloat() - r->asFloat();
+        return std::make_shared<const ScalarValue>(result);
     }
 }
 
@@ -78,21 +60,12 @@ ValuePtr Value::mul(const ValuePtr &r) const {
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r->type_ == kInteger) {
-        return std::make_shared<const Value>(this->intValue_ * r->intValue_);
+    if (!this->isScalarFloat() && !r->isScalarFloat()) {
+        auto result = this->asInteger() * r->asInteger();
+        return std::make_shared<const ScalarValue>(result);
     } else {
-        double result;
-        if (this->type_ == kInteger) {
-            result = static_cast<double>(this->intValue_);
-        } else {
-            result = this->floatValue_;
-        }
-        if (r->type_ == kInteger) {
-            result *= static_cast<double>(r->intValue_);
-        } else {
-            result *= r->floatValue_;
-        }
-        return std::make_shared<const Value>(result);
+        auto result = this->asFloat() * r->asFloat();
+        return std::make_shared<const ScalarValue>(result);
     }
 }
 
@@ -103,21 +76,12 @@ ValuePtr Value::div(const ValuePtr &r) const {
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r->type_ == kInteger) {
-        return std::make_shared<const Value>(this->intValue_ / r->intValue_);
+    if (!this->isScalarFloat() && !r->isScalarFloat()) {
+        auto result = this->asInteger() / r->asInteger();
+        return std::make_shared<const ScalarValue>(result);
     } else {
-        double result;
-        if (this->type_ == kInteger) {
-            result = static_cast<double>(this->intValue_);
-        } else {
-            result = this->floatValue_;
-        }
-        if (r->type_ == kInteger) {
-            result /= static_cast<double>(r->intValue_);
-        } else {
-            result /= r->floatValue_;
-        }
-        return std::make_shared<const Value>(result);
+        auto result = this->asFloat() / r->asFloat();
+        return std::make_shared<const ScalarValue>(result);
     }
 }
 
@@ -128,25 +92,15 @@ ValuePtr Value::pow(const ValuePtr &r) const {
 
     checkScalarArgs(r);
 
-    if (this->type_ == kInteger && r->type_ == kInteger) {
+    if (!this->isScalarFloat() && !r->isScalarFloat()) {
         /* std::pow always returns floating point type, but if both input
          * values were integer, then result should convert into int nicely,
          * unless, of course, it too big.  */
-        auto v = std::pow(this->intValue_, r->intValue_);
-        return std::make_shared<const Value>(static_cast<int>(v));
+        auto v = std::pow(this->asInteger(), r->asInteger());
+        return std::make_shared<const ScalarValue>(static_cast<int>(v));
     } else {
-        double result;
-        if (this->type_ == kInteger) {
-            result = static_cast<double>(this->intValue_);
-        } else {
-            result = this->floatValue_;
-        }
-        if (r->type_ == kInteger) {
-            result = std::pow(result, static_cast<double>(r->intValue_));
-        } else {
-            result = std::pow(result, r->floatValue_);
-        }
-        return std::make_shared<const Value>(result);
+        auto result = std::pow(this->asFloat(), r->asFloat());
+        return std::make_shared<const ScalarValue>(result);
     }
 }
 
@@ -154,9 +108,9 @@ const std::string IntegerRangeValue::asString() const {
     std::stringstream s;
     s << "{";
 
-    s << this->intValue_;
+    s << this->asInteger();
     for (auto v = this->next(); !v->isNone(); v = v->next()) {
-        s << ", " << v->intValue_;
+        s << ", " << v->asInteger();
     }
 
     s << "}";
@@ -169,6 +123,36 @@ ValuePtr IntegerRangeValue::next() const {
     } else {
         return std::make_shared<const IntegerRangeValue>(this->current_ + 1,
                                                          this->end_);
+    }
+}
+
+const std::string ScalarValue::asString() const {
+    if (this->type_ == kInteger) {
+        return std::to_string(this->intValue_);
+    } else {
+        return std::to_string(this->floatValue_);
+    }
+}
+
+int ScalarValue::asInteger() const {
+    switch (this->type_) {
+        case kInteger:
+          return this->intValue_;
+        case kFloat:
+          return static_cast<int>(this->floatValue_);
+        default:
+          return 0;
+    }
+}
+
+double ScalarValue::asFloat() const {
+    switch (this->type_) {
+        case kInteger:
+          return static_cast<double>(this->intValue_);
+        case kFloat:
+          return this->floatValue_;
+        default:
+          return 0.0;
     }
 }
 

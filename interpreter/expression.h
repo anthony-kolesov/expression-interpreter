@@ -102,7 +102,7 @@ class MapExpression : public Expression {
              i = i->next()) {
             /* i is a range value, but context should contain a scalar value -
              * current value in a range.  */
-            auto param = std::make_shared<const Value>(i->asInteger());
+            auto param = std::make_shared<const ScalarValue>(i->asInteger());
             funcCtx.setVariable(this->paramName_, param);
             auto newValue = this->func_->evaluate(&funcCtx);
             seq.push_back(newValue);
@@ -181,8 +181,8 @@ class ValueExpression : public Expression {
     ValuePtr value_;
 
  public:
-    explicit ValueExpression(const Value &v) {
-        this->value_ = std::make_shared<const Value>(v);
+    explicit ValueExpression(const ScalarValue &v) {
+        this->value_ = std::make_shared<const ScalarValue>(v);
     }
 
     virtual ValuePtr evaluate(Context *ctx) const {

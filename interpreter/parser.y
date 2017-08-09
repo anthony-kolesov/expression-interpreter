@@ -100,8 +100,8 @@ expr
     | expr[L] TOKEN_DIVIDE expr[R] { $$ = new DivExpression($L, $R); }
     | expr[L] TOKEN_POW expr[R] { $$ = new PowExpression($L, $R); }
     | TOKEN_LPAREN expr[E] TOKEN_RPAREN { $$ = $E; }
-    | TOKEN_NUMBER { $$ = new ValueExpression(Value($1));}
-    | TOKEN_FLOAT_NUMBER { $$ = new ValueExpression(Value($1)); }
+    | TOKEN_NUMBER { $$ = new ValueExpression(ScalarValue($1));}
+    | TOKEN_FLOAT_NUMBER { $$ = new ValueExpression(ScalarValue($1)); }
     | TOKEN_IDENTIFIER { $$ = new IdentifierExpression(std::string($1)); }
     | TOKEN_LCURLY expr[B] TOKEN_COMMA expr[E] TOKEN_RCURLY {
         $$ = new RangeExpression($B, $E);
