@@ -34,6 +34,7 @@ COMMENT #.*
 OUT "out"
 MAP "map"
 PRINT "print"
+REDUCE "reduce"
 VAR "var"
 
 ASSIGN "="
@@ -111,6 +112,7 @@ WS [ \r\n\t]*
 {OUT} { return TOKEN_OUT; }
 {MAP} { return TOKEN_MAP; }
 {PRINT} { return TOKEN_PRINT; }
+{REDUCE} { return TOKEN_REDUCE; }
 {VAR} { return TOKEN_VAR; }
 
 {IDENTIFIER} {

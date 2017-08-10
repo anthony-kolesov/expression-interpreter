@@ -1,0 +1,13 @@
+var a = reduce({5, 7}, 1, x y -> x * y)
+out a
+print "\n"
+
+var b = reduce({5, 7}, 1.5, left right -> left + right)
+out b
+print "\n"
+
+out a + b
+print "\n"
+
+out reduce(map({1, 5}, i -> i * 2), 0, l r -> l + r) + 1000000
+print "\n"

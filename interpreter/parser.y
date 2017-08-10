@@ -73,6 +73,7 @@ typedef void* yyscan_t;
 %token TOKEN_OUT
 %token TOKEN_MAP
 %token TOKEN_PRINT
+%token TOKEN_REDUCE
 %token TOKEN_VAR
 
 %type <expression> expr
@@ -109,6 +110,13 @@ expr
     | TOKEN_MAP TOKEN_LPAREN expr[E] TOKEN_COMMA TOKEN_IDENTIFIER[I]
         TOKEN_LAMBDA expr[L] TOKEN_RPAREN {
         $$ = new MapExpression($E, $I, $L);
+    }
+    | TOKEN_REDUCE TOKEN_LPAREN
+        expr[E] TOKEN_COMMA
+        expr[D] TOKEN_COMMA
+        TOKEN_IDENTIFIER[L] TOKEN_IDENTIFIER[R] TOKEN_LAMBDA expr[F]
+        TOKEN_RPAREN {
+        $$ = new ReduceExpression($E, $D, $L, $R, $F);
     }
     ;
 

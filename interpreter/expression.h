@@ -157,6 +157,37 @@ class RangeExpression : public Expression {
     }
 };
 
+class ReduceExpression : public Expression {
+ private:
+    std::string param1Name_;
+    std::string param2Name_;
+    std::unique_ptr<const Expression> default_;
+    std::unique_ptr<const Expression> input_;
+    std::unique_ptr<const Expression> func_;
+
+ public:
+    ReduceExpression(const Expression *input, const Expression *def,
+                    const std::string &param1Name,
+                    const std::string &param2Name,
+                    const Expression *func)
+        : input_(input), default_(def), param1Name_(param1Name)
+        , param2Name_(param2Name), func_(func) {
+    }
+
+    virtual ValuePtr evaluate(Context *ctx) const {
+        Context funcCtx;
+        auto result = default_->evaluate(ctx);
+        for (auto i = this->input_->evaluate(ctx);
+             !i->isNone();
+             i = i->next()) {
+            funcCtx.setVariable(this->param1Name_, result);
+            funcCtx.setVariable(this->param2Name_, i->asScalar());
+            result = this->func_->evaluate(&funcCtx);
+        }
+        return result;
+    }
+};
+
 class SubExpression : public Expression {
  private:
     std::unique_ptr<const Expression> left_;
