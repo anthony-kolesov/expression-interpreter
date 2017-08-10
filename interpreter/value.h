@@ -134,6 +134,8 @@ class VectorValue : public Value {
         s << "}";
         return s.str();
     }
+
+    virtual ValuePtr next() const;
 };
 
 class IntegerRangeValue : public Value {

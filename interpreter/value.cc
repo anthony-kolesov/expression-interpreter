@@ -108,6 +108,15 @@ ValuePtr VectorValue::asScalar() const {
     return this->sequence_[this->index_];
 }
 
+ValuePtr VectorValue::next() const {
+    if (this->index_ + 1 == this->sequence_.size()) {
+        return Value::kNone;
+    } else {
+        return std::make_shared<const VectorValue>(this->sequence_,
+                                                   this->index_ + 1);
+    }
+}
+
 const std::string IntegerRangeValue::asString() const {
     std::stringstream s;
     s << "{";
