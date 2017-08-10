@@ -113,7 +113,7 @@ class VectorValue : public Value {
 
  public:
     VectorValue(const std::vector<ValuePtr> &v, int index)
-        : Value(*v[index]), sequence_(v), index_(index) {
+        : sequence_(v), index_(index) {
     }
 
     virtual int asInteger() const {
