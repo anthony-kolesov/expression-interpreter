@@ -38,7 +38,7 @@ class Value {
      */
     void checkScalarArgs(const ValuePtr &r) const {
         if (!this->isScalar() || !r->isScalar()) {
-            auto msg = "Cannor perform arithmetic operation on range values.";
+            auto msg = "Cannor perform arithmetic operation on vector values.";
             throw std::invalid_argument(msg);
         }
     }
@@ -105,6 +105,11 @@ class VectorValue : public Value {
  private:
     std::vector<ValuePtr> sequence_;
     int index_;
+
+ protected:
+    virtual bool isScalar() const {
+        return false;
+    }
 
  public:
     VectorValue(const std::vector<ValuePtr> &v, int index)
