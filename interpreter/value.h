@@ -72,6 +72,10 @@ class Value {
     ValuePtr div(const ValuePtr &r) const;
     ValuePtr pow(const ValuePtr &r) const;
 
+    virtual ValuePtr asScalar() const {
+        return std::shared_ptr<const Value>(this);
+    }
+
     /**
      * @brief Get next value in a sequence.
      * @returns Next value in an integer sequence or kNone if this is the last
@@ -111,6 +115,8 @@ class VectorValue : public Value {
         return this->sequence_[this->index_]->asInteger();
     }
 
+    virtual ValuePtr asScalar() const;
+
     virtual const std::string asString() const {
         std::stringstream s;
         s << "{";
@@ -145,6 +151,8 @@ class IntegerRangeValue : public Value {
     virtual int asInteger() const {
         return this->current_;
     }
+
+    virtual ValuePtr asScalar() const;
 
     /**
      * @brief Get next value in a sequence.

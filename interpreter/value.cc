@@ -104,6 +104,10 @@ ValuePtr Value::pow(const ValuePtr &r) const {
     }
 }
 
+ValuePtr VectorValue::asScalar() const {
+    return this->sequence_[this->index_];
+}
+
 const std::string IntegerRangeValue::asString() const {
     std::stringstream s;
     s << "{";
@@ -115,6 +119,10 @@ const std::string IntegerRangeValue::asString() const {
 
     s << "}";
     return s.str();
+}
+
+ValuePtr IntegerRangeValue::asScalar() const {
+    return std::make_shared<const ScalarValue>(this->asInteger());
 }
 
 ValuePtr IntegerRangeValue::next() const {

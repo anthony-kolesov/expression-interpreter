@@ -100,10 +100,7 @@ class MapExpression : public Expression {
         for (auto i = this->input_->evaluate(ctx);
              !i->isNone();
              i = i->next()) {
-            /* i is a range value, but context should contain a scalar value -
-             * current value in a range.  */
-            auto param = std::make_shared<const ScalarValue>(i->asInteger());
-            funcCtx.setVariable(this->paramName_, param);
+            funcCtx.setVariable(this->paramName_, i->asScalar());
             auto newValue = this->func_->evaluate(&funcCtx);
             seq.push_back(newValue);
         }
