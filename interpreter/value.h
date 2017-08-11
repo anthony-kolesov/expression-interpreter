@@ -43,6 +43,7 @@ class Value {
         }
     }
 
+ public:
     virtual bool isScalar() const {
         return true;
     }
@@ -51,7 +52,6 @@ class Value {
         return false;
     }
 
- public:
     static const ValuePtr kNone;
 
     virtual bool isNone() const {
@@ -106,12 +106,11 @@ class VectorValue : public Value {
     std::vector<ValuePtr> sequence_;
     int index_;
 
- protected:
+ public:
     virtual bool isScalar() const {
         return false;
     }
 
- public:
     VectorValue(const std::vector<ValuePtr> &v, int index)
         : sequence_(v), index_(index) {
     }
@@ -143,12 +142,11 @@ class IntegerRangeValue : public Value {
     int current_;
     int end_;
 
- protected:
+ public:
     virtual bool isScalar() const {
         return false;
     }
 
- public:
     IntegerRangeValue(int begin, int end)
         : current_(begin), end_(end) {
     }
@@ -184,7 +182,7 @@ class ScalarValue : public Value {
 
     explicit ScalarValue(ValueType vt) : type_(vt) { }
 
- protected:
+ public:
     virtual bool isScalar() const {
         return true;
     }
@@ -193,7 +191,6 @@ class ScalarValue : public Value {
         return (this->type_ == kFloat);
     }
 
- public:
     explicit ScalarValue(int v)
         : type_(kInteger), intValue_(v) {
     }
