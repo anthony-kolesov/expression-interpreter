@@ -163,7 +163,7 @@ class ReduceExpression : public Expression {
     std::string param2Name_;
     std::unique_ptr<const Expression> default_;
     std::unique_ptr<const Expression> input_;
-    std::unique_ptr<const Expression> func_;
+    std::shared_ptr<const Expression> func_;
 
  public:
     ReduceExpression(const Expression *input, const Expression *def,
@@ -174,17 +174,27 @@ class ReduceExpression : public Expression {
         , param2Name_(param2Name), func_(func) {
     }
 
-    virtual ValuePtr evaluate(Context *ctx) const {
+    static ValuePtr getResult(ValuePtr input, ValuePtr dflt,
+                              const std::string &param1,
+                              const std::string &param2,
+                              std::shared_ptr<const Expression> func) {
         Context funcCtx;
-        auto result = default_->evaluate(ctx);
-        for (auto i = this->input_->evaluate(ctx);
-             !i->isNone();
-             i = i->next()) {
-            funcCtx.setVariable(this->param1Name_, result);
-            funcCtx.setVariable(this->param2Name_, i->asScalar());
-            result = this->func_->evaluate(&funcCtx);
+        auto result = dflt;
+        for (; !input->isNone(); input = input->next()) {
+            funcCtx.setVariable(param1, result);
+            funcCtx.setVariable(param2, input->asScalar());
+            result = func->evaluate(&funcCtx);
         }
         return result;
+    }
+
+    virtual ValuePtr evaluate(Context *ctx) const {
+        auto inputVal = this->input_->evaluate(ctx);
+        auto dflt = default_->evaluate(ctx);
+        auto future = std::async(std::launch::async, getResult, inputVal,
+                                 dflt, this->param1Name_, this->param2Name_,
+                                 this->func_);
+        return std::make_shared<const AsyncValue>(future);
     }
 };
 

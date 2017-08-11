@@ -17,7 +17,7 @@ SRCFILES = lexer.cc parser.cc context.cc error.cc main.cc value.cc
 OBJFILES = $(patsubst %.cc,%.o,$(SRCFILES))
 APP = interpreter.elf
 
-CFLAGS= -g -std=c++11 -DYYERROR_VERBOSE -MMD
+CFLAGS= -g -std=c++11 -DYYERROR_VERBOSE -MMD -pthread
 CXXFLAGS = $(CFLAGS)
 
 all: $(APP)

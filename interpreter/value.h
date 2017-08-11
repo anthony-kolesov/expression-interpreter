@@ -18,7 +18,9 @@
 #ifndef VALUE_H_
 #define VALUE_H_
 
+#include <future>
 #include <memory>
+#include <mutex>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -213,7 +215,62 @@ class ScalarValue : public Value {
 
     virtual int asInteger() const;
 
-    double asFloat() const;
+    virtual double asFloat() const;
+};
+
+class AsyncValue : public Value {
+ private:
+    /* Most of the Value classes are presumed to be immutable and therefore we
+     * use mostly pointers to const Values. But async value are a special case,
+     * since their value is unknown at creating, therefore they are mutable by
+     * definition. I think it is valuable to keep values const in general,
+     * therefore this class has to declare all of it's data-members mutable and
+     * use mutex to ensure consistence in future usage. */
+    mutable std::future<ValuePtr> futureValue_;
+    mutable ValuePtr value_;
+    mutable std::mutex mtx_;
+
+    void sync() const {
+        std::lock_guard<std::mutex> lock(this->mtx_);
+        if (this->futureValue_.valid()) {
+            this->value_ = this->futureValue_.get();
+        }
+    }
+
+ public:
+    virtual bool isScalar() const {
+        this->sync();
+        return this->value_->isScalar();
+    }
+
+    virtual bool isScalarFloat() const {
+        this->sync();
+        return this->value_->isScalarFloat();
+    }
+
+    AsyncValue(std::future<ValuePtr> &fv) {
+        this->futureValue_ = std::move(fv);
+    }
+
+    virtual const std::string asString() const {
+        this->sync();
+        return this->value_->asString();
+    }
+
+    virtual int asInteger() const {
+        this->sync();
+        return this->value_->asInteger();
+    }
+
+    virtual double asFloat() const {
+        this->sync();
+        return this->value_->asFloat();
+    }
+
+    virtual ValuePtr next() const {
+        this->sync();
+        return Value::kNone;
+    }
 };
 
 #endif  // VALUE_H_
