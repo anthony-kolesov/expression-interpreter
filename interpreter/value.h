@@ -238,6 +238,11 @@ class AsyncValue : public Value {
     }
 
  public:
+    virtual ValuePtr asScalar() const {
+        this->sync();
+        return this->value_->asScalar();
+    }
+
     virtual bool isScalar() const {
         this->sync();
         return this->value_->isScalar();
@@ -269,7 +274,7 @@ class AsyncValue : public Value {
 
     virtual ValuePtr next() const {
         this->sync();
-        return Value::kNone;
+        return this->value_->next();
     }
 };
 
