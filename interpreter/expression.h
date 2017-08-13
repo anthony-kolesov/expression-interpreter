@@ -86,7 +86,11 @@ class MapExpression : public Expression {
  private:
     std::string paramName_;
     std::unique_ptr<const Expression> input_;
-    std::unique_ptr<const Expression> func_;
+    std::shared_ptr<const Expression> func_;
+
+    static ValuePtr getResult(ValuePtr input,
+                              const std::string &paramName,
+                              std::shared_ptr<const Expression> func);
 
  public:
     MapExpression(const Expression *input, const std::string &paramName,
@@ -94,18 +98,7 @@ class MapExpression : public Expression {
         : input_(input), paramName_(paramName), func_(func) {
     }
 
-    virtual ValuePtr evaluate(Context *ctx) const {
-        std::vector<ValuePtr> seq;
-        Context funcCtx;
-        for (auto i = this->input_->evaluate(ctx);
-             !i->isNone();
-             i = i->next()) {
-            funcCtx.setVariable(this->paramName_, i->asScalar());
-            auto newValue = this->func_->evaluate(&funcCtx);
-            seq.push_back(newValue);
-        }
-        return std::make_shared<const VectorValue>(seq, 0);
-    }
+    virtual ValuePtr evaluate(Context *ctx) const;
 };
 
 class MulExpression : public Expression {
@@ -177,25 +170,9 @@ class ReduceExpression : public Expression {
     static ValuePtr getResult(ValuePtr input, ValuePtr dflt,
                               const std::string &param1,
                               const std::string &param2,
-                              std::shared_ptr<const Expression> func) {
-        Context funcCtx;
-        auto result = dflt;
-        for (; !input->isNone(); input = input->next()) {
-            funcCtx.setVariable(param1, result);
-            funcCtx.setVariable(param2, input->asScalar());
-            result = func->evaluate(&funcCtx);
-        }
-        return result;
-    }
+                              std::shared_ptr<const Expression> func);
 
-    virtual ValuePtr evaluate(Context *ctx) const {
-        auto inputVal = this->input_->evaluate(ctx);
-        auto dflt = default_->evaluate(ctx);
-        auto future = std::async(std::launch::async, getResult, inputVal,
-                                 dflt, this->param1Name_, this->param2Name_,
-                                 this->func_);
-        return std::make_shared<const AsyncValue>(future);
-    }
+    virtual ValuePtr evaluate(Context *ctx) const;
 };
 
 class SubExpression : public Expression {

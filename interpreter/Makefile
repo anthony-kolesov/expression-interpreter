@@ -13,7 +13,14 @@ CPPLINT = tools/cpplint.py
 CPPLINTFLAGS = --filter=-build/include --root=interpreter
 
 HFILES = context.h error.h expression.h statement.h value.h
-SRCFILES = lexer.cc parser.cc context.cc error.cc main.cc value.cc
+SRCFILES = \
+		   context.cc \
+		   error.cc \
+		   expression.cc \
+		   main.cc \
+		   value.cc \
+		   lexer.cc \
+		   parser.cc
 OBJFILES = $(patsubst %.cc,%.o,$(SRCFILES))
 APP = interpreter.elf
 
