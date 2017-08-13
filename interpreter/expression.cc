@@ -33,7 +33,7 @@ ValuePtr MapExpression::evaluate(Context *ctx) const {
     auto inputVal = this->input_->evaluate(ctx);
     auto future = std::async(std::launch::async, getResult, inputVal,
                              this->paramName_, this->func_);
-    return std::make_shared<const AsyncValue>(future);
+    return std::make_shared<const AsyncValue>(&future);
 }
 
 ValuePtr ReduceExpression::getResult(ValuePtr input, ValuePtr dflt,
@@ -57,7 +57,7 @@ ValuePtr ReduceExpression::evaluate(Context *ctx) const {
     auto future = std::async(std::launch::async, getResult, inputVal,
                              dflt, this->param1Name_, this->param2Name_,
                              this->func_);
-    return std::make_shared<const AsyncValue>(future);
+    return std::make_shared<const AsyncValue>(&future);
 }
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab

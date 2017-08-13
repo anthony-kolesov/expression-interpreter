@@ -18,9 +18,9 @@
 #ifndef VALUE_H_
 #define VALUE_H_
 
-#include <future>
+#include <future> // NOLINT
 #include <memory>
-#include <mutex>
+#include <mutex> // NOLINT
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -253,8 +253,8 @@ class AsyncValue : public Value {
         return this->value_->isScalarFloat();
     }
 
-    AsyncValue(std::future<ValuePtr> &fv) {
-        this->futureValue_ = std::move(fv);
+    explicit AsyncValue(std::future<ValuePtr> *fv) {
+        this->futureValue_ = std::move(*fv);
     }
 
     virtual const std::string asString() const {
