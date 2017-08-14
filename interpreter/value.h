@@ -123,18 +123,7 @@ class VectorValue : public Value {
 
     virtual ValuePtr asScalar() const;
 
-    virtual const std::string asString() const {
-        std::stringstream s;
-        s << "{";
-
-        s << this->sequence_[this->index_]->asString();
-        for (int i = this->index_ + 1; i < this->sequence_.size(); i++) {
-            s << ", " << this->sequence_[i]->asString();
-        }
-
-        s << "}";
-        return s.str();
-    }
+    virtual const std::string asString() const;
 
     virtual ValuePtr next() const;
 };

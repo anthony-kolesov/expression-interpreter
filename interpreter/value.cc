@@ -108,6 +108,19 @@ ValuePtr VectorValue::asScalar() const {
     return this->sequence_[this->index_];
 }
 
+const std::string VectorValue::asString() const {
+    std::stringstream s;
+    s << "{";
+
+    s << this->sequence_[this->index_]->asString();
+    for (int i = this->index_ + 1; i < this->sequence_.size(); i++) {
+        s << ", " << this->sequence_[i]->asString();
+    }
+
+    s << "}";
+    return s.str();
+}
+
 ValuePtr VectorValue::next() const {
     if (this->index_ + 1 == this->sequence_.size()) {
         return Value::kNone;
