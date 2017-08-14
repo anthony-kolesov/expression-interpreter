@@ -105,16 +105,16 @@ ValuePtr Value::pow(const ValuePtr &r) const {
 }
 
 ValuePtr VectorValue::asScalar() const {
-    return this->sequence_[this->index_];
+    return (*this->vec_)[this->begin_];
 }
 
 const std::string VectorValue::asString() const {
     std::stringstream s;
     s << "{";
 
-    s << this->sequence_[this->index_]->asString();
-    for (int i = this->index_ + 1; i < this->sequence_.size(); i++) {
-        s << ", " << this->sequence_[i]->asString();
+    s << (*this->vec_)[this->begin_]->asString();
+    for (int i = this->begin_ + 1; i < this->end_; i++) {
+        s << ", " << (*this->vec_)[i]->asString();
     }
 
     s << "}";
@@ -122,11 +122,12 @@ const std::string VectorValue::asString() const {
 }
 
 ValuePtr VectorValue::next() const {
-    if (this->index_ + 1 == this->sequence_.size()) {
+    if (this->begin_ + 1 == this->end_) {
         return Value::kNone;
     } else {
-        return std::make_shared<const VectorValue>(this->sequence_,
-                                                   this->index_ + 1);
+        return std::make_shared<const VectorValue>(*this,
+                                                   this->begin_ + 1,
+                                                   this->end_);
     }
 }
 

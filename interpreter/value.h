@@ -105,20 +105,25 @@ class NoneValue : public Value {
 
 class VectorValue : public Value {
  private:
-    std::vector<ValuePtr> sequence_;
-    int index_;
+    std::shared_ptr< std::vector< ValuePtr > > vec_;
+    int begin_;
+    int end_;
 
  public:
     virtual bool isScalar() const {
         return false;
     }
 
-    VectorValue(const std::vector<ValuePtr> &v, int index)
-        : sequence_(v), index_(index) {
+    explicit VectorValue(std::vector<ValuePtr> *vec)
+        : vec_(vec), begin_(0), end_(vec->size()) {
+    }
+
+    VectorValue(const VectorValue &vv, int begin, int end)
+        : vec_(vv.vec_), begin_(begin), end_(end) {
     }
 
     virtual int asInteger() const {
-        return this->sequence_[this->index_]->asInteger();
+        return (*this->vec_)[this->begin_]->asInteger();
     }
 
     virtual ValuePtr asScalar() const;

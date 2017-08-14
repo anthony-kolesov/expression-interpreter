@@ -19,14 +19,14 @@
 
 ValuePtr MapExpression::getResult(ValuePtr input, const std::string &paramName,
                                   std::shared_ptr<const Expression> func) {
-    std::vector<ValuePtr> seq;
+    auto seq = new std::vector<ValuePtr>();
     Context funcCtx;
     for (; !input->isNone(); input = input->next()) {
         funcCtx.setVariable(paramName, input->asScalar());
         auto newValue = func->evaluate(&funcCtx);
-        seq.push_back(newValue);
+        seq->push_back(newValue);
     }
-    return std::make_shared<const VectorValue>(seq, 0);
+    return std::make_shared<const VectorValue>(seq);
 }
 
 ValuePtr MapExpression::evaluate(Context *ctx) const {
