@@ -25,6 +25,7 @@ OBJFILES = $(patsubst %.cc,%.o,$(SRCFILES))
 APP = interpreter.elf
 
 CFLAGS= -g -std=c++11 -DYYERROR_VERBOSE -MMD -pthread
+CFLAGS += -O3
 CXXFLAGS = $(CFLAGS)
 
 all: $(APP)
