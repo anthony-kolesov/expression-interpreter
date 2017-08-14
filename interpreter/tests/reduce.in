@@ -2,7 +2,7 @@ var a = reduce({5, 7}, 1, x y -> x * y)
 out a
 print "\n"
 
-var b = reduce({5, 7}, 1.5, left right -> left + right)
+var b = reduce({5, 7}, 0.0, left right -> left + right)
 out b
 print "\n"
 
