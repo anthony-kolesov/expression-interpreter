@@ -86,6 +86,20 @@ class Value {
     virtual ValuePtr next() const {
         return Value::kNone;
     }
+
+    /**
+     * @brief Size of this vector. Makes sense only for non-scalar types.
+     */
+    virtual int getSize() const {
+        return 1;
+    }
+
+    /**
+     * @brief Get a slice of the original vector.
+     */
+    virtual ValuePtr getSlice(int begin, int end) const {
+        return Value::kNone;
+    }
 };
 
 class NoneValue : public Value {
@@ -131,6 +145,15 @@ class VectorValue : public Value {
     virtual const std::string asString() const;
 
     virtual ValuePtr next() const;
+
+    virtual int getSize() const {
+        return this->end_ - this->begin_;
+    }
+
+    virtual ValuePtr getSlice(int begin, int end) const {
+        return std::make_shared<const VectorValue>(
+            *this, this->begin_ + begin, this->begin_ + end);
+    }
 };
 
 class IntegerRangeValue : public Value {
@@ -161,6 +184,16 @@ class IntegerRangeValue : public Value {
      * item in sequence.
      */
     virtual ValuePtr next() const;
+
+    virtual int getSize() const {
+        return this->end_ - this->current_ + 1;
+    }
+
+    virtual ValuePtr getSlice(int begin, int end) const {
+        return std::make_shared<const IntegerRangeValue>(
+            this->current_ + begin,
+            std::min(this->end_, this->current_ + end - 1));
+    }
 };
 
 class ScalarValue : public Value {
@@ -269,6 +302,16 @@ class AsyncValue : public Value {
     virtual ValuePtr next() const {
         this->sync();
         return this->value_->next();
+    }
+
+    virtual int getSize() const {
+        this->sync();
+        return this->value_->getSize();
+    }
+
+    virtual ValuePtr getSlice(int begin, int getSize) const {
+        this->sync();
+        return this->value_->getSlice(begin, getSize);
     }
 };
 
