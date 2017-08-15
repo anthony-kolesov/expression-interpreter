@@ -72,7 +72,6 @@ ValuePtr ReduceExpression::getResult(ValuePtr input, ValuePtr dflt,
                                      std::shared_ptr<const Expression> func) {
     Context funcCtx;
     auto result = dflt;
-    int i = 0;
     for (; !input->isNone(); input = input->next()) {
         funcCtx.setVariable(param1, result);
         funcCtx.setVariable(param2, input->asScalar());
@@ -84,10 +83,40 @@ ValuePtr ReduceExpression::getResult(ValuePtr input, ValuePtr dflt,
 ValuePtr ReduceExpression::evaluate(Context *ctx) const {
     auto inputVal = this->input_->evaluate(ctx);
     auto dflt = default_->evaluate(ctx);
-    auto future = std::async(std::launch::async, getResult, inputVal,
-                             dflt, this->param1Name_, this->param2Name_,
-                             this->func_);
-    return std::make_shared<const AsyncValue>(&future);
+    auto inputSize = inputVal->getSize();
+    auto slicesCount = std::min<int>(inputSize,
+                                     std::thread::hardware_concurrency());
+
+    std::vector< std::future< ValuePtr > > intermediate;
+    auto begin = 0, end = 0;
+    auto sliceSize = inputSize / slicesCount;
+
+    for (auto i = 0; i < slicesCount; i++) {
+        begin = end;
+        /* Make sure we don't last elements in last slice, in case inputSize
+         * doesn't divide evenly.  */
+        if (i == slicesCount - 1) {
+            end = inputSize;
+        } else {
+            end += sliceSize;
+        }
+
+        auto future = std::async(std::launch::async, getResult,
+                                 inputVal->getSlice(begin, end),
+                                 dflt, this->param1Name_, this->param2Name_,
+                                 this->func_);
+        intermediate.push_back(std::move(future));
+    }
+
+    auto intermediateValues = new std::vector<ValuePtr>();
+    intermediateValues->reserve(slicesCount);
+    for (auto &&future : intermediate) {
+        intermediateValues->push_back(future.get());
+    }
+
+    auto finalValue = std::make_shared<const VectorValue>(intermediateValues);
+    return getResult(finalValue, dflt, this->param1Name_, this->param2Name_,
+                     this->func_);
 }
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab
