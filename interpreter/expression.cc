@@ -17,23 +17,53 @@
 
 #include "expression.h"
 
-ValuePtr MapExpression::getResult(ValuePtr input, const std::string &paramName,
-                                  std::shared_ptr<const Expression> func) {
-    auto seq = new std::vector<ValuePtr>();
+std::vector<ValuePtr> MapExpression::getResult(
+    ValuePtr input, const std::string &paramName,
+    std::shared_ptr<const Expression> func) {
+
+    std::vector<ValuePtr> seq;
+    seq.reserve(input->getSize());
     Context funcCtx;
     for (; !input->isNone(); input = input->next()) {
         funcCtx.setVariable(paramName, input->asScalar());
         auto newValue = func->evaluate(&funcCtx);
-        seq->push_back(newValue);
+        seq.push_back(newValue);
     }
-    return std::make_shared<const VectorValue>(seq);
+    return seq;
 }
 
 ValuePtr MapExpression::evaluate(Context *ctx) const {
     auto inputVal = this->input_->evaluate(ctx);
-    auto future = std::async(std::launch::async, getResult, inputVal,
-                             this->paramName_, this->func_);
-    return std::make_shared<const AsyncValue>(&future);
+    auto inputSize = inputVal->getSize();
+    auto slicesCount = std::min<int>(inputSize,
+                                     std::thread::hardware_concurrency());
+    auto begin = 0, end = 0;
+    auto sliceSize = inputSize / slicesCount;
+    std::vector< std::future< std::vector<ValuePtr> > > intermediate;
+
+    for (auto i = 0; i < slicesCount; i++) {
+        begin = end;
+        /* Make sure we don't last elements in last slice, in case inputSize
+         * doesn't divide evenly.  */
+        if (i == slicesCount - 1) {
+            end = inputSize;
+        } else {
+            end += sliceSize;
+        }
+
+        auto future = std::async(std::launch::async, getResult,
+                                 inputVal->getSlice(begin, end),
+                                 this->paramName_, this->func_);
+        intermediate.push_back(std::move(future));
+    }
+
+    auto vector = new std::vector<ValuePtr>();
+    vector->reserve(inputSize);
+    for (auto &&future : intermediate) {
+        auto slice = future.get();
+        vector->insert(vector->end(), slice.begin(), slice.end());
+    }
+    return std::make_shared<const VectorValue>(vector);
 }
 
 ValuePtr ReduceExpression::getResult(ValuePtr input, ValuePtr dflt,

@@ -88,7 +88,7 @@ class MapExpression : public Expression {
     std::unique_ptr<const Expression> input_;
     std::shared_ptr<const Expression> func_;
 
-    static ValuePtr getResult(ValuePtr input,
+    static std::vector<ValuePtr> getResult(ValuePtr input,
                               const std::string &paramName,
                               std::shared_ptr<const Expression> func);
 
