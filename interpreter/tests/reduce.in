@@ -6,8 +6,14 @@ var b = reduce({5, 7}, 0.0, left right -> left + right)
 out b
 print "\n"
 
+# Use reduce result.
 out a + b
 print "\n"
 
+# Map as input to reduce.
 out reduce(map({1, 5}, i -> i * 2), 0, l r -> l + r) + 1000000
+print "\n"
+
+# Float input.
+out reduce(map({1, 5}, i -> i * 2.0), 0, l r -> l + r)
 print "\n"
