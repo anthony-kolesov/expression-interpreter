@@ -136,9 +136,8 @@ ValuePtr ReduceExpression::evaluate(Context *ctx) const {
         intermediateValues->push_back(future.get());
     }
 
-    auto finalValue = std::make_shared<const VectorValue>(intermediateValues);
-    return getResult(finalValue, dflt, this->param1Name_, this->param2Name_,
-                     this->func_);
+    return getResult(std::make_shared<const VectorValue>(intermediateValues),
+                     dflt, this->param1Name_, this->param2Name_, this->func_);
 }
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab
