@@ -1,0 +1,1 @@
+out reduce({1, 3}, 0, theta nu -> {7, 8})

@@ -27,6 +27,12 @@ std::vector<ValuePtr> MapExpression::getResult(
     for (; !input->isNone(); input = input->next()) {
         funcCtx.setVariable(paramName, input->asScalar());
         auto newValue = func->evaluate(&funcCtx);
+
+        if (!newValue->isScalar()) {
+            auto msg = "Can't return vector value as result of lambda function.";
+            throw std::invalid_argument(msg);
+        }
+
         seq.push_back(newValue);
     }
     return seq;
@@ -77,6 +83,12 @@ ValuePtr ReduceExpression::getResult(ValuePtr input, ValuePtr dflt,
         funcCtx.setVariable(param2, input->asScalar());
         result = func->evaluate(&funcCtx);
     }
+
+    if (!result->isScalar()) {
+        auto msg = "Can't return vector value as result of lambda function.";
+        throw std::invalid_argument(msg);
+    }
+
     return result;
 }
 
