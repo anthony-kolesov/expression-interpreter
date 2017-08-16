@@ -1,0 +1,9 @@
+var n = 40000000
+var v = {0, n}
+var m = map(v, i -> i - 1)
+var r = reduce(v, 1.0, i k -> i + k / 2000000.0)
+
+print "n = "
+out n
+print "\n"
+
