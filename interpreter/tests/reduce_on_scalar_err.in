@@ -1,0 +1,1 @@
+out reduce(9, 0, q t -> q + t + 1)

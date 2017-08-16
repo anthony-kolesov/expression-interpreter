@@ -47,6 +47,11 @@ ValuePtr MapExpression::evaluate(Context *ctx) const {
     auto sliceSize = inputSize / slicesCount;
     std::vector< std::future< std::vector<ValuePtr> > > intermediate;
 
+    if (inputVal->isScalar()) {
+        auto msg = "Can't perform map operation on scalar value.";
+        throw std::invalid_argument(msg);
+    }
+
     for (auto i = 0; i < slicesCount; i++) {
         begin = end;
         /* Make sure we don't last elements in last slice, in case inputSize
@@ -102,6 +107,11 @@ ValuePtr ReduceExpression::evaluate(Context *ctx) const {
     std::vector< std::future< ValuePtr > > intermediate;
     auto begin = 0, end = 0;
     auto sliceSize = inputSize / slicesCount;
+
+    if (inputVal->isScalar()) {
+        auto msg = "Can't perform reduce operation on scalar value.";
+        throw std::invalid_argument(msg);
+    }
 
     for (auto i = 0; i < slicesCount; i++) {
         begin = end;
