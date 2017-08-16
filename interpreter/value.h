@@ -40,7 +40,7 @@ class Value {
      */
     void checkScalarArgs(const ValuePtr &r) const {
         if (!this->isScalar() || !r->isScalar()) {
-            auto msg = "Cannor perform arithmetic operation on vector values.";
+            auto msg = "Cannot perform arithmetic operation on vector values.";
             throw std::invalid_argument(msg);
         }
     }
