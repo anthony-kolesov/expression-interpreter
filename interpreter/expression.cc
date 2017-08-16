@@ -17,6 +17,11 @@
 
 #include "expression.h"
 
+/**
+ * If input vector is lesser than this size size, then map/reduce will be done
+ * in the main thread, without concurrency.  */
+static const int multithreadingThreshold = 32;
+
 std::vector<ValuePtr> MapExpression::getResult(
     ValuePtr input, const std::string &paramName,
     std::shared_ptr<const Expression> func) {
@@ -40,17 +45,26 @@ std::vector<ValuePtr> MapExpression::getResult(
 
 ValuePtr MapExpression::evaluate(Context *ctx) const {
     auto inputVal = this->input_->evaluate(ctx);
-    auto inputSize = inputVal->getSize();
-    auto slicesCount = std::min<int>(inputSize,
-                                     std::thread::hardware_concurrency());
-    auto begin = 0, end = 0;
-    auto sliceSize = inputSize / slicesCount;
-    std::vector< std::future< std::vector<ValuePtr> > > intermediate;
 
     if (inputVal->isScalar()) {
         auto msg = "Can't perform map operation on scalar value.";
         throw std::invalid_argument(msg);
     }
+
+
+    auto inputSize = inputVal->getSize();
+    if (inputSize < multithreadingThreshold) {
+        auto r = new std::vector<ValuePtr>(getResult(inputVal,
+                                                     this->paramName_,
+                                                     this->func_));
+        return std::make_shared<const VectorValue>(r);
+    }
+
+    auto slicesCount = std::min<int>(inputSize,
+                                     std::thread::hardware_concurrency());
+    auto begin = 0, end = 0;
+    auto sliceSize = inputSize / slicesCount;
+    std::vector< std::future< std::vector<ValuePtr> > > intermediate;
 
     for (auto i = 0; i < slicesCount; i++) {
         begin = end;
@@ -99,19 +113,26 @@ ValuePtr ReduceExpression::getResult(ValuePtr input, ValuePtr dflt,
 
 ValuePtr ReduceExpression::evaluate(Context *ctx) const {
     auto inputVal = this->input_->evaluate(ctx);
-    auto dflt = default_->evaluate(ctx);
-    auto inputSize = inputVal->getSize();
-    auto slicesCount = std::min<int>(inputSize,
-                                     std::thread::hardware_concurrency());
-
-    std::vector< std::future< ValuePtr > > intermediate;
-    auto begin = 0, end = 0;
-    auto sliceSize = inputSize / slicesCount;
 
     if (inputVal->isScalar()) {
         auto msg = "Can't perform reduce operation on scalar value.";
         throw std::invalid_argument(msg);
     }
+
+    auto inputSize = inputVal->getSize();
+    auto dflt = default_->evaluate(ctx);
+
+    /* No reason for concurrency if input is too small.  */
+    if (inputSize < multithreadingThreshold) {
+        return getResult(inputVal, dflt, this->param1Name_, this->param2Name_,
+                         this->func_);
+    }
+
+    auto slicesCount = std::min<int>(inputSize,
+                                     std::thread::hardware_concurrency());
+    std::vector< std::future< ValuePtr > > intermediate;
+    auto begin = 0, end = 0;
+    auto sliceSize = inputSize / slicesCount;
 
     for (auto i = 0; i < slicesCount; i++) {
         begin = end;
