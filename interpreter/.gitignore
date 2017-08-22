@@ -1,4 +1,5 @@
 *.elf
+*.exe
 *.o
 *.d
 parser.cc

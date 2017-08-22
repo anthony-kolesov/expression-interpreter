@@ -22,7 +22,14 @@ SRCFILES = \
 		   lexer.cc \
 		   parser.cc
 OBJFILES = $(patsubst %.cc,%.o,$(SRCFILES))
-APP = interpreter.elf
+
+ifeq ($(shell uname -o),Msys)
+EXE = exe
+else
+EXE = elf
+endif
+
+APP = interpreter.$(EXE)
 
 CFLAGS= -g -std=c++11 -DYYERROR_VERBOSE -MMD -pthread
 CFLAGS += -O3
