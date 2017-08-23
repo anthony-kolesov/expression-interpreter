@@ -80,6 +80,7 @@ private:
     void setupEditor(QWidget *parent);
     void setupFileMenu();
     void setupHelpMenu();
+    void showErrors(const QString &err);
 
     QTextEdit *editor;
     Highlighter *highlighter;

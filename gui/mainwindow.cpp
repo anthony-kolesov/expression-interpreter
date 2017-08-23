@@ -129,6 +129,38 @@ void MainWindow::setupEditor(QWidget *parent)
 }
 //! [1]
 
+void MainWindow::showErrors(const QString &err) {
+    auto errors = err.split("\n", QString::SplitBehavior::SkipEmptyParts);
+
+    QTextDocument *doc = editor->document();
+
+    QTextCharFormat errFormat;
+    errFormat.setUnderlineColor(QColor(Qt::red));
+    errFormat.setUnderlineStyle(QTextCharFormat::UnderlineStyle::SpellCheckUnderline);
+
+    for (auto &&e : errors) {
+        auto errorParts = e.split(":");
+        auto posInfo = errorParts[1].split("-");
+        QString beginInfo = posInfo[0];
+        QString endInfo = posInfo.size() > 1 ? posInfo[1] : "";
+        int beginLine = beginInfo.split(",")[0].toInt();
+        int beginCol = beginInfo.split(",")[1].toInt();
+        int endCol = beginCol;
+        if (posInfo.size() > 1) {
+            endCol = posInfo[1].split(",")[1].toInt();
+        }
+
+        QTextCursor cursor(doc->findBlockByLineNumber(beginLine - 1));
+        cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, beginCol);
+        if (endCol > beginCol) {
+            cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, endCol - beginCol + 1);
+        } else {
+            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+        }
+        cursor.mergeCharFormat(errFormat);
+    }
+}
+
 void MainWindow::run()
 {
     auto process = new QProcess(this);
@@ -152,6 +184,8 @@ void MainWindow::run()
     auto stderrOutput = QString(process->readAllStandardError());
     auto resultString = QString(resultData) + stderrOutput;
     this->errWindow->setPlainText(resultString);
+
+    this->showErrors(stderrOutput);
 }
 
 void MainWindow::setupFileMenu()
