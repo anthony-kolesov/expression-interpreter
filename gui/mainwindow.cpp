@@ -49,6 +49,7 @@
 ****************************************************************************/
 
 #include <QtWidgets>
+#include <QProcess>
 
 #include "mainwindow.h"
 
@@ -58,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setupFileMenu();
     setupHelpMenu();
+
+    menuBar()->addAction(tr("&Run"), this, SLOT(run()));
 
     this->verticalWidget = new QWidget(this);
 
@@ -125,6 +128,30 @@ void MainWindow::setupEditor(QWidget *parent)
         editor->setPlainText(file.readAll());
 }
 //! [1]
+
+void MainWindow::run()
+{
+    auto process = new QProcess(this);
+    QString exeFile = QFileInfo( QCoreApplication::applicationFilePath() ).dir().absolutePath()
+                + "/../../interpreter/interpreter.exe";
+    process->start(exeFile);
+
+    if (!process->waitForStarted()) {
+        throw std::invalid_argument("not started");
+    }
+
+    auto programTextString = this->editor->toPlainText().toStdString();
+    process->write(programTextString.c_str());
+    process->closeWriteChannel();
+
+    if (!process->waitForFinished()) {
+        throw std::invalid_argument("not finished");
+    }
+
+    auto resultData = process->readAll();
+    auto resultString = QString(resultData);
+    this->errWindow->setPlainText(resultString);
+}
 
 void MainWindow::setupFileMenu()
 {

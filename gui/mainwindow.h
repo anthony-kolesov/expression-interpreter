@@ -74,6 +74,7 @@ public slots:
     void about();
     void newFile();
     void openFile(const QString &path = QString());
+    void run();
 
 private:
     void setupEditor(QWidget *parent);
