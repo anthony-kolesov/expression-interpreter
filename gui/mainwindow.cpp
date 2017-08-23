@@ -149,7 +149,8 @@ void MainWindow::run()
     }
 
     auto resultData = process->readAll();
-    auto resultString = QString(resultData);
+    auto stderrOutput = QString(process->readAllStandardError());
+    auto resultString = QString(resultData) + stderrOutput;
     this->errWindow->setPlainText(resultString);
 }
 
