@@ -107,6 +107,10 @@ Highlighter::Highlighter(QTextDocument *parent)
 //! [6]
     commentStartExpression = QRegularExpression("/\\*");
     commentEndExpression = QRegularExpression("\\*/");
+
+    // Error format.
+    errorFormat.setUnderlineColor(QColor(Qt::red));
+    errorFormat.setUnderlineStyle(QTextCharFormat::UnderlineStyle::SpellCheckUnderline);
 }
 //! [6]
 
@@ -144,6 +148,15 @@ void Highlighter::highlightBlock(const QString &text)
         }
         setFormat(startIndex, commentLength, multiLineCommentFormat);
         startIndex = text.indexOf(commentStartExpression, startIndex + commentLength);
+    }
+
+    if (this->currentBlockUserData() != nullptr) {
+        auto userData = dynamic_cast<ErrorData*>(this->currentBlockUserData());
+        if (userData->getBeginLine() - 1 == this->currentBlock().firstLineNumber()) {
+            setFormat(userData->getBeginCol(),
+                      userData->getEndCol() - userData->getBeginCol() + 1,
+                      errorFormat);
+        }
     }
 }
 //! [11]

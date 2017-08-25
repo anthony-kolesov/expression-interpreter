@@ -87,7 +87,31 @@ private:
     QTextCharFormat multiLineCommentFormat;
     QTextCharFormat quotationFormat;
     QTextCharFormat functionFormat;
+
+    QTextCharFormat errorFormat;
 };
 //! [0]
+
+class ErrorData : public QTextBlockUserData
+{
+public:
+    ErrorData(int beginLine, int beginCol, int endLine, int endCol) {
+        this->beginLine = beginLine;
+        this->beginCol = beginCol;
+        this->endLine = endLine;
+        this->endCol = endCol;
+    }
+
+    int getBeginLine() const { return this->beginLine; }
+    int getBeginCol() const { return this->beginCol; }
+    int getEndLine() const { return this->endLine; }
+    int getEndCol() const { return this->endCol; }
+
+private:
+    int beginLine;
+    int beginCol;
+    int endLine;
+    int endCol;
+};
 
 #endif // HIGHLIGHTER_H

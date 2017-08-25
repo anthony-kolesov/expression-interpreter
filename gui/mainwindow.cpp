@@ -138,6 +138,12 @@ void MainWindow::showErrors(const QString &err) {
     errFormat.setUnderlineColor(QColor(Qt::red));
     errFormat.setUnderlineStyle(QTextCharFormat::UnderlineStyle::SpellCheckUnderline);
 
+    // Clear previous errors.
+    for (auto block = doc->begin(); !block.isValid(); block = block.next()) {
+        delete block.userData();
+        block.setUserData(nullptr);
+    }
+
     for (auto &&e : errors) {
         auto errorParts = e.split(":");
         auto posInfo = errorParts[1].split("-");
@@ -150,15 +156,12 @@ void MainWindow::showErrors(const QString &err) {
             endCol = posInfo[1].split(",")[1].toInt();
         }
 
-        QTextCursor cursor(doc->findBlockByLineNumber(beginLine - 1));
-        cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, beginCol);
-        if (endCol > beginCol) {
-            cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, endCol - beginCol + 1);
-        } else {
-            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-        }
-        cursor.mergeCharFormat(errFormat);
+        auto data = new ErrorData(beginLine, beginCol, beginLine, endCol);
+        doc->findBlockByLineNumber(beginLine - 1).setUserData(data);
     }
+
+    this->highlighter->rehighlight();
+    this->editor->repaint();
 }
 
 void MainWindow::run()
